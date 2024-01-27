@@ -26,9 +26,26 @@ const Board = () => {
 
             style: [
                 {
+                    selector: "node:selected",
+                    style: {
+                        "border-width": 2,
+                        "border-color": "black",
+                        "background-color": "#999999",
+                        // "background-blacken": 0.3,
+                    },
+                },
+                {
                     selector: "edge",
                     style: {
                         "curve-style": "unbundled-bezier",
+                        "line-color": "#999999",
+                    },
+                },
+                {
+                    selector: "edge:selected",
+                    style: {
+                        "overlay-opacity": 0.1,
+                        "overlay-padding": 5,
                     },
                 },
             ],
