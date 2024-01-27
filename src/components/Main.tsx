@@ -1,5 +1,4 @@
 import React, { useState } from "react"
-// import OldBoard from "./board/OldBoard"
 // import Menu from "./menu/Menu"
 import cytoscape from "cytoscape"
 import Board from "./board/Board"

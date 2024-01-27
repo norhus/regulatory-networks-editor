@@ -1,14 +1,18 @@
 import React, { useEffect, useRef, useState } from "react"
 import cytoscape from "cytoscape"
-import "./Board.css"
+import classes from "./Board.module.css"
 // import edgeHandles from "cytoscape-edgehandles";
 import Menu from "../menu/Menu"
+import { Simulate } from "react-dom/test-utils"
 
 // cytoscape.use(edgeHandles);
 
 const Board = () => {
-    const graphRef = useRef(null)
     const [cy, setCy] = useState<cytoscape.Core>()
+    const [isPickingColor, setIsPickingColor] = useState(false)
+    const [color, setColor] = useState<string>("999999")
+
+    const graphRef = useRef(null)
     const selectedNodes = useRef<string[]>([])
 
     const initCytoscape = () => {
@@ -46,6 +50,10 @@ const Board = () => {
 
         cy?.on("unselect", "node", (e) => {
             selectedNodes.current = selectedNodes.current.filter((node) => node !== e.target.data().id)
+        })
+
+        cy?.on("mousedown", (e) => {
+            setIsPickingColor(false)
         })
 
         setCy(cy)
@@ -100,18 +108,33 @@ const Board = () => {
         }
     }
 
-    const changeColor = () => {
-        cy?.elements(":selected").style({
-            "background-color": "red",
-            "line-color": "red",
+    const onColorChange = (color: string) => {
+        setColor(color)
+    }
+
+    const onConfirmColor = () => {
+        console.log(cy?.nodes().style())
+        cy?.nodes(":selected").style({
+            "background-color": color,
         })
+        cy?.edges(":selected").style({
+            "line-color": color,
+        })
+        setIsPickingColor(false)
     }
 
     return (
-        <>
-            <Menu addEdge={addEdge} changeColor={changeColor} />
-            <div className={"board"} ref={graphRef} id={"cyBoard"} />
-        </>
+        <React.Fragment>
+            <Menu
+                onAddEdgeClick={addEdge}
+                isPickingColor={isPickingColor}
+                color={color}
+                onChangeColorClick={() => setIsPickingColor(!isPickingColor)}
+                onColorChange={onColorChange}
+                onConfirmColor={onConfirmColor}
+            />
+            <div className={classes.board} ref={graphRef} id={"cyBoard"} />
+        </React.Fragment>
     )
 }
 

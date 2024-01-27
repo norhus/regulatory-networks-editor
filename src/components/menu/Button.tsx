@@ -1,5 +1,5 @@
 import React from "react"
-import "./Menu.css"
+import classes from "./Menu.module.css"
 
 interface Props {
     title: string
@@ -9,7 +9,7 @@ interface Props {
 
 const Button: React.FC<Props> = ({ title, onClick = undefined, disabled = false }) => {
     return (
-        <button className={"button"} onClick={onClick} disabled={disabled}>
+        <button className={classes.button} onClick={onClick} disabled={disabled}>
             {title}
         </button>
     )
