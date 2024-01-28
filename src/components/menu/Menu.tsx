@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React from "react"
 import classes from "./Menu.module.css"
 import Button from "./Button"
 import { HexColorPicker } from "react-colorful"
@@ -10,9 +10,38 @@ interface Props {
     isPickingColor: boolean
     onColorChange: (color: string) => void
     onConfirmColor: () => void
+    isPickingNodeShape: boolean
+    onShapeChange: (shape?: string | null) => void
 }
 
-const presetColors = ["#ff0000", "#ff9100", "#ffff00", "#40ff00", "#00ffea", "#0048ff", "#a100ff", "#ff00ea"]
+const presetColors = ["#999999", "#ff0000", "#ff9100", "#ffff00", "#40ff00", "#00ffea", "#0048ff", "#a100ff", "#ff00ea"]
+const shapes = [
+    "ellipse",
+    "triangle",
+    "round-triangle",
+    "rectangle",
+    "round-rectangle",
+    "bottom-round-rectangle",
+    "cut-rectangle",
+    "barrel",
+    "rhomboid",
+    "right-rhomboid",
+    "diamond",
+    "round-diamond",
+    "pentagon",
+    "round-pentagon",
+    "hexagon",
+    "round-hexagon",
+    "concave-hexagon",
+    "heptagon",
+    "round-heptagon",
+    "octagon",
+    "round-octagon",
+    "star",
+    "tag",
+    "round-tag",
+    "vee",
+]
 
 const Menu: React.FC<Props> = ({
     onAddEdgeClick,
@@ -21,14 +50,16 @@ const Menu: React.FC<Props> = ({
     isPickingColor,
     onColorChange,
     onConfirmColor,
+    isPickingNodeShape,
+    onShapeChange,
 }) => {
     return (
         <div className={classes.menu}>
             <Button title={"Add edge"} onClick={onAddEdgeClick} />
-            <div className={classes.colorPickerContainer}>
+            <div className={classes.contentContainer}>
                 <Button title={"Change color"} onClick={onChangeColorClick} />
                 {isPickingColor && (
-                    <div className={classes.colorPickerSubContainer}>
+                    <div className={classes.contentSubContainer}>
                         <HexColorPicker className={classes.colorPicker} onChange={onColorChange} color={color} />
                         <div className={classes.colorPickerSwatches}>
                             {presetColors.map((presetColor) => (
@@ -43,6 +74,23 @@ const Menu: React.FC<Props> = ({
                         <button onClick={onConfirmColor} className={classes.colorPickerConfirmButton}>
                             Confirm
                         </button>
+                    </div>
+                )}
+            </div>
+            <div className={classes.contentContainer}>
+                <Button title={"Select node shape"} onClick={() => onShapeChange()} />
+                {isPickingNodeShape && (
+                    <div className={classes.dropdownContainer}>
+                        {shapes.map((shape) => (
+                            <button
+                                onClick={(e) => onShapeChange(e.currentTarget.id)}
+                                className={classes.colorPickerConfirmButton}
+                                id={shape}
+                                key={shape}
+                            >
+                                {shape}
+                            </button>
+                        ))}
                     </div>
                 )}
             </div>

@@ -3,7 +3,6 @@ import cytoscape from "cytoscape"
 import classes from "./Board.module.css"
 // import edgeHandles from "cytoscape-edgehandles";
 import Menu from "../menu/Menu"
-import { Simulate } from "react-dom/test-utils"
 
 // cytoscape.use(edgeHandles);
 
@@ -11,6 +10,7 @@ const Board = () => {
     const [cy, setCy] = useState<cytoscape.Core>()
     const [isPickingColor, setIsPickingColor] = useState(false)
     const [color, setColor] = useState<string>("999999")
+    const [isPickingNodeShape, setIsPickingNodeShape] = useState(false)
 
     const graphRef = useRef(null)
     const selectedNodes = useRef<string[]>([])
@@ -69,8 +69,12 @@ const Board = () => {
             selectedNodes.current = selectedNodes.current.filter((node) => node !== e.target.data().id)
         })
 
-        cy?.on("mousedown", (e) => {
-            setIsPickingColor(false)
+        cy?.on("click", (e) => {
+            if (e.target === cy) {
+                setIsPickingColor(false)
+                setIsPickingNodeShape(false)
+            }
+            console.log(cy?.edges()[0]?.controlPoints())
         })
 
         setCy(cy)
@@ -130,7 +134,6 @@ const Board = () => {
     }
 
     const onConfirmColor = () => {
-        console.log(cy?.nodes().style())
         cy?.nodes(":selected").style({
             "background-color": color,
         })
@@ -138,6 +141,15 @@ const Board = () => {
             "line-color": color,
         })
         setIsPickingColor(false)
+    }
+
+    const onShapeChange = (shape: null | string = null) => {
+        if (shape) {
+            cy?.nodes(":selected").style({
+                shape: shape,
+            })
+        }
+        setIsPickingNodeShape(!isPickingNodeShape)
     }
 
     return (
@@ -149,6 +161,8 @@ const Board = () => {
                 onChangeColorClick={() => setIsPickingColor(!isPickingColor)}
                 onColorChange={onColorChange}
                 onConfirmColor={onConfirmColor}
+                isPickingNodeShape={isPickingNodeShape}
+                onShapeChange={onShapeChange}
             />
             <div className={classes.board} ref={graphRef} id={"cyBoard"} />
         </React.Fragment>

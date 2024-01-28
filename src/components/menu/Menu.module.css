@@ -13,18 +13,18 @@
 }
 
 .button:hover {
-    background-color: #6e6e6e;
+    background-color: #838383;
     cursor: pointer;
 }
 
-.colorPickerContainer {
+.contentContainer {
     display: flex;
     flex-wrap: wrap;
     width: 100%;
     justify-content: center;
 }
 
-.colorPickerSubContainer {
+.contentSubContainer {
     display: flex;
     flex-wrap: wrap;
     background-color: #F0F0F0FF;
@@ -69,6 +69,19 @@
 }
 
 .colorPickerConfirmButton:hover {
-    background-color: #6e6e6e;
+    background-color: #838383;
     cursor: pointer;
+}
+
+.dropdownContainer {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: #F0F0F0FF;
+    border-radius: 9px;
+    z-index: 1;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    max-width: 300px;
+    place-content: center;
+    height: 200px;
+    overflow: auto;
 }
