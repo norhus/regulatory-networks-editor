@@ -1,10 +1,14 @@
 import React, { useEffect, useRef, useState } from "react"
 import cytoscape from "cytoscape"
 import classes from "./Board.module.css"
-// import edgeHandles from "cytoscape-edgehandles";
 import Menu from "../menu/Menu"
+import edgeHandles from "cytoscape-edgehandles"
+import edgeEditing from "cytoscape-edge-editing"
+import jquery from "jquery"
+import konva from "konva"
 
-// cytoscape.use(edgeHandles);
+// @ts-ignore
+edgeEditing(cytoscape, jquery, konva)
 
 const Board = () => {
     const [cy, setCy] = useState<cytoscape.Core>()
@@ -74,8 +78,10 @@ const Board = () => {
                 setIsPickingColor(false)
                 setIsPickingNodeShape(false)
             }
-            console.log(cy?.edges()[0]?.controlPoints())
         })
+
+        // @ts-ignore
+        console.log(cy?.edgeEditing())
 
         setCy(cy)
     }
