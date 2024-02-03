@@ -1,7 +1,7 @@
 import React from "react"
 import classes from "./Menu.module.css"
 import Button from "./Button"
-import { HexColorPicker } from "react-colorful"
+import { HexColorPicker, HexAlphaColorPicker } from "react-colorful"
 
 interface Props {
     onAddEdgeClick: () => void
@@ -60,7 +60,7 @@ const Menu: React.FC<Props> = ({
                 <Button title={"Change color"} onClick={onChangeColorClick} />
                 {isPickingColor && (
                     <div className={classes.contentSubContainer}>
-                        <HexColorPicker className={classes.colorPicker} onChange={onColorChange} color={color} />
+                        <HexAlphaColorPicker className={classes.colorPicker} onChange={onColorChange} color={color} />
                         <div className={classes.colorPickerSwatches}>
                             {presetColors.map((presetColor) => (
                                 <button

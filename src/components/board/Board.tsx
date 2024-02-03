@@ -2,13 +2,12 @@ import React, { useEffect, useRef, useState } from "react"
 import cytoscape from "cytoscape"
 import classes from "./Board.module.css"
 import Menu from "../menu/Menu"
-import edgeHandles from "cytoscape-edgehandles"
-import edgeEditing from "cytoscape-edge-editing"
-import jquery from "jquery"
-import konva from "konva"
+// import edgeHandles from "cytoscape-edgehandles"
+// import edgeEditing from "cytoscape-edge-editing"
+// import jquery from "jquery"
+// import konva from "konva"
 
-// @ts-ignore
-edgeEditing(cytoscape, jquery, konva)
+// edgeEditing(cytoscape, jquery, konva)
 
 const Board = () => {
     const [cy, setCy] = useState<cytoscape.Core>()
@@ -80,8 +79,7 @@ const Board = () => {
             }
         })
 
-        // @ts-ignore
-        console.log(cy?.edgeEditing())
+        // console.log(cy?.edgeEditing())
 
         setCy(cy)
     }
@@ -140,11 +138,19 @@ const Board = () => {
     }
 
     const onConfirmColor = () => {
+        let opacity = 1
+        let currentColor = color
+        if (color.length > 7) {
+            opacity = Math.round((parseInt(color.slice(-2), 16) / 255) * 100) / 100
+            currentColor = currentColor.slice(0, -2)
+        }
         cy?.nodes(":selected").style({
-            "background-color": color,
+            "background-color": currentColor,
+            "background-opacity": opacity,
         })
         cy?.edges(":selected").style({
-            "line-color": color,
+            "line-color": currentColor,
+            "line-opacity": opacity,
         })
         setIsPickingColor(false)
     }
