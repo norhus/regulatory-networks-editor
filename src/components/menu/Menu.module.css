@@ -56,8 +56,7 @@
     outline: none;
 }
 
-.colorPickerConfirmButton {
-    display: block;
+.confirmButton {
     width: 100%;
     height: 30px;
     border: none;
@@ -68,7 +67,7 @@
     border-radius: 4px;
 }
 
-.colorPickerConfirmButton:hover {
+.confirmButton:hover {
     background-color: #838383;
     cursor: pointer;
 }
@@ -84,4 +83,12 @@
     place-content: center;
     height: 200px;
     overflow: auto;
+}
+
+.dimensionInput {
+    width: 100%;
+    height: 25px;
+    border: none;
+    margin: 8px;
+    border-radius: 4px;
 }

@@ -1,7 +1,7 @@
 import React from "react"
 import classes from "./Menu.module.css"
 import Button from "./Button"
-import { HexColorPicker, HexAlphaColorPicker } from "react-colorful"
+import { HexAlphaColorPicker } from "react-colorful"
 
 interface Props {
     onAddEdgeClick: () => void
@@ -12,6 +12,11 @@ interface Props {
     onConfirmColor: () => void
     isPickingNodeShape: boolean
     onShapeChange: (shape?: string | null) => void
+    dimensions: { height: number; width: number }
+    isPickingNodeDimensions: boolean
+    onChangeDimensionsClick: () => void
+    onDimensionsChange: (dimensions: { height: number; width: number }) => void
+    onConfirmDimensions: () => void
 }
 
 const presetColors = ["#999999", "#ff0000", "#ff9100", "#ffff00", "#40ff00", "#00ffea", "#0048ff", "#a100ff", "#ff00ea"]
@@ -52,6 +57,11 @@ const Menu: React.FC<Props> = ({
     onConfirmColor,
     isPickingNodeShape,
     onShapeChange,
+    isPickingNodeDimensions,
+    dimensions,
+    onChangeDimensionsClick,
+    onDimensionsChange,
+    onConfirmDimensions,
 }) => {
     return (
         <div className={classes.menu}>
@@ -71,7 +81,7 @@ const Menu: React.FC<Props> = ({
                                 />
                             ))}
                         </div>
-                        <button onClick={onConfirmColor} className={classes.colorPickerConfirmButton}>
+                        <button onClick={onConfirmColor} className={classes.confirmButton}>
                             Confirm
                         </button>
                     </div>
@@ -84,13 +94,45 @@ const Menu: React.FC<Props> = ({
                         {shapes.map((shape) => (
                             <button
                                 onClick={(e) => onShapeChange(e.currentTarget.id)}
-                                className={classes.colorPickerConfirmButton}
+                                className={classes.confirmButton}
                                 id={shape}
                                 key={shape}
                             >
                                 {shape}
                             </button>
                         ))}
+                    </div>
+                )}
+            </div>
+            <div className={classes.contentContainer}>
+                <Button title={"Change node dimensions"} onClick={onChangeDimensionsClick} />
+                {isPickingNodeDimensions && (
+                    <div className={classes.contentSubContainer}>
+                        <label htmlFor="height"> Height </label>
+                        <input
+                            type="number"
+                            id="height"
+                            min={30}
+                            className={classes.dimensionInput}
+                            value={dimensions.height}
+                            onChange={(e) =>
+                                onDimensionsChange({ height: parseInt(e.target.value), width: dimensions.width })
+                            }
+                        />
+                        <label htmlFor="width"> Width </label>
+                        <input
+                            type="number"
+                            id="width"
+                            min={30}
+                            className={classes.dimensionInput}
+                            value={dimensions.width}
+                            onChange={(e) =>
+                                onDimensionsChange({ height: dimensions.height, width: parseInt(e.target.value) })
+                            }
+                        />
+                        <button onClick={onConfirmDimensions} className={classes.confirmButton}>
+                            Confirm
+                        </button>
                     </div>
                 )}
             </div>

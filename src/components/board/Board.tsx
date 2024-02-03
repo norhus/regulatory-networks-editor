@@ -14,6 +14,8 @@ const Board = () => {
     const [isPickingColor, setIsPickingColor] = useState(false)
     const [color, setColor] = useState<string>("999999")
     const [isPickingNodeShape, setIsPickingNodeShape] = useState(false)
+    const [isPickingNodeDimensions, setIsPickingNodeDimensions] = useState(false)
+    const [dimensions, setDimensions] = useState({ height: 30, width: 30 })
 
     const graphRef = useRef(null)
     const selectedNodes = useRef<string[]>([])
@@ -76,6 +78,7 @@ const Board = () => {
             if (e.target === cy) {
                 setIsPickingColor(false)
                 setIsPickingNodeShape(false)
+                setIsPickingNodeDimensions(false)
             }
         })
 
@@ -164,6 +167,20 @@ const Board = () => {
         setIsPickingNodeShape(!isPickingNodeShape)
     }
 
+    const onDimensionsChange = (dimensions: { height: number; width: number }) => {
+        if (dimensions.height && dimensions.width && dimensions.height >= 30 && dimensions.width >= 30) {
+            setDimensions(dimensions)
+        }
+    }
+
+    const onConfirmDimensions = () => {
+        cy?.nodes(":selected").style({
+            height: dimensions.height,
+            width: dimensions.width,
+        })
+        setIsPickingNodeDimensions(false)
+    }
+
     return (
         <React.Fragment>
             <Menu
@@ -175,6 +192,11 @@ const Board = () => {
                 onConfirmColor={onConfirmColor}
                 isPickingNodeShape={isPickingNodeShape}
                 onShapeChange={onShapeChange}
+                dimensions={dimensions}
+                isPickingNodeDimensions={isPickingNodeDimensions}
+                onChangeDimensionsClick={() => setIsPickingNodeDimensions(!isPickingNodeDimensions)}
+                onDimensionsChange={onDimensionsChange}
+                onConfirmDimensions={onConfirmDimensions}
             />
             <div className={classes.board} ref={graphRef} id={"cyBoard"} />
         </React.Fragment>
