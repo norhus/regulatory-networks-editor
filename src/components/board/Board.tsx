@@ -19,6 +19,7 @@ const Board = () => {
 
     const graphRef = useRef(null)
     const selectedNodes = useRef<string[]>([])
+    const numberOfNodes = useRef<number>(0)
 
     const initCytoscape = () => {
         const cy = cytoscape({
@@ -30,6 +31,15 @@ const Board = () => {
             layout: { name: "preset" },
 
             style: [
+                {
+                    selector: "node",
+                    style: {
+                        label: "data(label)",
+                        "text-valign": "top",
+                        "text-wrap": "ellipsis",
+                        "text-max-width": "80",
+                    },
+                },
                 {
                     selector: "node:selected",
                     style: {
@@ -58,11 +68,13 @@ const Board = () => {
 
         cy?.on("dblclick", (e) => {
             if (e.target === cy) {
+                const nodeNumber = numberOfNodes.current + 1
                 cy?.add({
                     group: "nodes",
-                    data: { label: `Node${cy.nodes().length}` },
+                    data: { label: `Node_${nodeNumber}` },
                     position: e.position,
                 })
+                numberOfNodes.current = nodeNumber
             }
         })
 
