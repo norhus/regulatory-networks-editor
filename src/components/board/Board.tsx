@@ -97,8 +97,11 @@ const Board = () => {
         })
 
         // @ts-ignore
-        setCdnd(cy?.compoundDragAndDrop())
+        const cdnd = cy?.compoundDragAndDrop()
+        // @ts-ignore
+        cdnd?.disable()
 
+        setCdnd(cdnd)
         setCy(cy)
     }
 
