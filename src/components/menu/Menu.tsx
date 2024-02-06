@@ -17,6 +17,8 @@ interface Props {
     onChangeDimensionsClick: () => void
     onDimensionsChange: (dimensions: { height: number; width: number }) => void
     onConfirmDimensions: () => void
+    onCreateCompartmentsClick: (enable: boolean) => void
+    compartmentsMode: boolean
 }
 
 const presetColors = ["#999999", "#ff0000", "#ff9100", "#ffff00", "#40ff00", "#00ffea", "#0048ff", "#a100ff", "#ff00ea"]
@@ -62,6 +64,8 @@ const Menu: React.FC<Props> = ({
     onChangeDimensionsClick,
     onDimensionsChange,
     onConfirmDimensions,
+    onCreateCompartmentsClick,
+    compartmentsMode,
 }) => {
     return (
         <div className={classes.menu}>
@@ -137,6 +141,11 @@ const Menu: React.FC<Props> = ({
                     </div>
                 )}
             </div>
+            <Button
+                title={"Create compartments"}
+                onClick={() => onCreateCompartmentsClick(!compartmentsMode)}
+                active={compartmentsMode}
+            />
         </div>
     )
 }

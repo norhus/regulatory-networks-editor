@@ -17,6 +17,22 @@
     cursor: pointer;
 }
 
+.activeButton {
+    background-color: #76ff69;
+}
+
+.activeButton:hover {
+    background-color: #59c84f;
+}
+
+.unactiveButton {
+    background-color: #ff6969;
+}
+
+.unactiveButton:hover {
+    background-color: #c35151;
+}
+
 .contentContainer {
     display: flex;
     flex-wrap: wrap;

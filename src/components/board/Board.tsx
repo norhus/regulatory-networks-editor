@@ -2,12 +2,14 @@ import React, { useEffect, useRef, useState } from "react"
 import cytoscape from "cytoscape"
 import classes from "./Board.module.css"
 import Menu from "../menu/Menu"
+import compoundDragAndDrop from "cytoscape-compound-drag-and-drop"
 // import edgeHandles from "cytoscape-edgehandles"
 // import edgeEditing from "cytoscape-edge-editing"
 // import jquery from "jquery"
 // import konva from "konva"
 
 // edgeEditing(cytoscape, jquery, konva)
+cytoscape.use(compoundDragAndDrop)
 
 const Board = () => {
     const [cy, setCy] = useState<cytoscape.Core>()
@@ -16,6 +18,8 @@ const Board = () => {
     const [isPickingNodeShape, setIsPickingNodeShape] = useState(false)
     const [isPickingNodeDimensions, setIsPickingNodeDimensions] = useState(false)
     const [dimensions, setDimensions] = useState({ height: 30, width: 30 })
+    const [compartmentsMode, setCompartmentsMode] = useState(false)
+    const [cdnd, setCdnd] = useState()
 
     const graphRef = useRef(null)
     const selectedNodes = useRef<string[]>([])
@@ -25,9 +29,7 @@ const Board = () => {
         const cy = cytoscape({
             container: graphRef.current,
             maxZoom: 1,
-
             selectionType: "additive",
-
             layout: { name: "preset" },
 
             style: [
@@ -94,7 +96,8 @@ const Board = () => {
             }
         })
 
-        // console.log(cy?.edgeEditing())
+        // @ts-ignore
+        setCdnd(cy?.compoundDragAndDrop())
 
         setCy(cy)
     }
@@ -193,6 +196,12 @@ const Board = () => {
         setIsPickingNodeDimensions(false)
     }
 
+    const onCreateCompartmentsClick = (enable: boolean) => {
+        // @ts-ignore
+        enable ? cdnd?.enable() : cdnd?.disable()
+        setCompartmentsMode(enable)
+    }
+
     return (
         <React.Fragment>
             <Menu
@@ -209,6 +218,8 @@ const Board = () => {
                 onChangeDimensionsClick={() => setIsPickingNodeDimensions(!isPickingNodeDimensions)}
                 onDimensionsChange={onDimensionsChange}
                 onConfirmDimensions={onConfirmDimensions}
+                compartmentsMode={compartmentsMode}
+                onCreateCompartmentsClick={onCreateCompartmentsClick}
             />
             <div className={classes.board} ref={graphRef} id={"cyBoard"} />
         </React.Fragment>
