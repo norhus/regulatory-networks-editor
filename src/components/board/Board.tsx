@@ -4,11 +4,16 @@ import classes from "./Board.module.css"
 import Menu from "../menu/Menu"
 import compoundDragAndDrop from "cytoscape-compound-drag-and-drop"
 // import edgeHandles from "cytoscape-edgehandles"
-// import edgeEditing from "cytoscape-edge-editing"
-// import jquery from "jquery"
-// import konva from "konva"
+import edgeEditing from "cytoscape-edge-editing"
+import jquery from "jquery"
+import konva from "konva"
 
-// edgeEditing(cytoscape, jquery, konva)
+// Make jquery globally available. This is required for
+// cytoscape-edge-editing to work.
+(global as any).$ = (global as any).jQuery = jquery;
+// Types seem to work poorly for this module, so we register it
+// like this to avoid issues.
+(edgeEditing as any)(cytoscape, jquery, konva)
 cytoscape.use(compoundDragAndDrop)
 
 const Board = () => {
@@ -68,6 +73,20 @@ const Board = () => {
             ],
         })
 
+        // So far, we use the default parameters for edge editing.
+        const ee = (cy as any).edgeEditing({})
+        // Edge editing *always* registers a context-tap listener
+        // and calls the context menu from there, even if the context
+        // menu extension is not present (I believe this is a bug, but
+        // it could also be a change in cytoscape behaviour; maybe this 
+        // even was previously not triggered at all if the extension
+        // was not present).
+        //
+        // This removes said listener completely. Fortunately, we don't 
+        // use any other functionality that requires this event, so we
+        // can go a little "overboard" here and remove all listeners.
+        cy.off('cxttap')
+        
         cy?.on("dblclick", (e) => {
             if (e.target === cy) {
                 const nodeNumber = numberOfNodes.current + 1
