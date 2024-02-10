@@ -3,18 +3,19 @@ import cytoscape from "cytoscape"
 import classes from "./Board.module.css"
 import Menu from "../menu/Menu"
 import compoundDragAndDrop from "cytoscape-compound-drag-and-drop"
-// import edgeHandles from "cytoscape-edgehandles"
+import noOverlap from "cytoscape-no-overlap"
 import edgeEditing from "cytoscape-edge-editing"
 import jquery from "jquery"
 import konva from "konva"
 
 // Make jquery globally available. This is required for
 // cytoscape-edge-editing to work.
-(global as any).$ = (global as any).jQuery = jquery;
+;(global as any).$ = (global as any).jQuery = jquery
 // Types seem to work poorly for this module, so we register it
 // like this to avoid issues.
-(edgeEditing as any)(cytoscape, jquery, konva)
+;(edgeEditing as any)(cytoscape, jquery, konva)
 cytoscape.use(compoundDragAndDrop)
+cytoscape.use(noOverlap)
 
 const Board = () => {
     const [cy, setCy] = useState<cytoscape.Core>()
@@ -25,6 +26,7 @@ const Board = () => {
     const [dimensions, setDimensions] = useState({ height: 30, width: 30 })
     const [compartmentsMode, setCompartmentsMode] = useState(false)
     const [cdnd, setCdnd] = useState()
+    const [ee, setEe] = useState()
 
     const graphRef = useRef(null)
     const selectedNodes = useRef<string[]>([])
@@ -35,7 +37,6 @@ const Board = () => {
             container: graphRef.current,
             maxZoom: 1,
             selectionType: "additive",
-            layout: { name: "preset" },
 
             style: [
                 {
@@ -73,24 +74,15 @@ const Board = () => {
             ],
         })
 
-        // So far, we use the default parameters for edge editing.
-        const ee = (cy as any).edgeEditing({})
-        // Edge editing *always* registers a context-tap listener
-        // and calls the context menu from there, even if the context
-        // menu extension is not present (I believe this is a bug, but
-        // it could also be a change in cytoscape behaviour; maybe this 
-        // even was previously not triggered at all if the extension
-        // was not present).
-        //
-        // This removes said listener completely. Fortunately, we don't 
-        // use any other functionality that requires this event, so we
-        // can go a little "overboard" here and remove all listeners.
-        cy.off('cxttap')
-        
-        cy?.on("dblclick", (e) => {
+        cy.on("mousedown", "node", (e) => {
+            // @ts-ignore
+            cy.nodes().noOverlap({ padding: 10 })
+        })
+
+        cy.on("dblclick", (e) => {
             if (e.target === cy) {
                 const nodeNumber = numberOfNodes.current + 1
-                cy?.add({
+                cy.add({
                     group: "nodes",
                     data: { label: `Node_${nodeNumber}` },
                     position: e.position,
@@ -99,15 +91,15 @@ const Board = () => {
             }
         })
 
-        cy?.on("select", "node", (e) => {
+        cy.on("select", "node", (e) => {
             selectedNodes.current = [...selectedNodes.current, e.target.data().id]
         })
 
-        cy?.on("unselect", "node", (e) => {
+        cy.on("unselect", "node", (e) => {
             selectedNodes.current = selectedNodes.current.filter((node) => node !== e.target.data().id)
         })
 
-        cy?.on("click", (e) => {
+        cy.on("click", (e) => {
             if (e.target === cy) {
                 setIsPickingColor(false)
                 setIsPickingNodeShape(false)
@@ -115,11 +107,26 @@ const Board = () => {
             }
         })
 
-        // @ts-ignore
-        const cdnd = cy?.compoundDragAndDrop()
-        // @ts-ignore
-        cdnd?.disable()
+        // So far, we use the default parameters for edge editing.
+        const ee = (cy as any).edgeEditing({})
+        // Edge editing *always* registers a context-tap listener
+        // and calls the context menu from there, even if the context
+        // menu extension is not present (I believe this is a bug, but
+        // it could also be a change in cytoscape behaviour; maybe this
+        // even was previously not triggered at all if the extension
+        // was not present).
+        //
+        // This removes said listener completely. Fortunately, we don't
+        // use any other functionality that requires this event, so we
+        // can go a little "overboard" here and remove all listeners.
+        cy.off("cxttap")
 
+        // @ts-ignore
+        const cdnd = cy.compoundDragAndDrop()
+        // @ts-ignore
+        cdnd.disable()
+
+        setEe(ee)
         setCdnd(cdnd)
         setCy(cy)
     }
