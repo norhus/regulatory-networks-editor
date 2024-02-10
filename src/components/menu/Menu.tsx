@@ -19,6 +19,8 @@ interface Props {
     onConfirmDimensions: () => void
     onCreateCompartmentsClick: (enable: boolean) => void
     compartmentsMode: boolean
+    isPickingCurveStyle: boolean
+    onCurveStyleChange: (curveStyle?: string | null) => void
 }
 
 const presetColors = ["#999999", "#ff0000", "#ff9100", "#ffff00", "#40ff00", "#00ffea", "#0048ff", "#a100ff", "#ff00ea"]
@@ -49,6 +51,7 @@ const shapes = [
     "round-tag",
     "vee",
 ]
+const curveStyles = ["unbundled-bezier", "segments"]
 
 const Menu: React.FC<Props> = ({
     onAddEdgeClick,
@@ -66,6 +69,8 @@ const Menu: React.FC<Props> = ({
     onConfirmDimensions,
     onCreateCompartmentsClick,
     compartmentsMode,
+    isPickingCurveStyle,
+    onCurveStyleChange,
 }) => {
     return (
         <div className={classes.menu}>
@@ -138,6 +143,23 @@ const Menu: React.FC<Props> = ({
                         <button onClick={onConfirmDimensions} className={classes.confirmButton}>
                             Confirm
                         </button>
+                    </div>
+                )}
+            </div>
+            <div className={classes.contentContainer}>
+                <Button title={"Select edge curve style"} onClick={() => onCurveStyleChange()} />
+                {isPickingCurveStyle && (
+                    <div className={classes.dropdownContainer}>
+                        {curveStyles.map((curveStyle) => (
+                            <button
+                                onClick={(e) => onCurveStyleChange(e.currentTarget.id)}
+                                className={classes.confirmButton}
+                                id={curveStyle}
+                                key={curveStyle}
+                            >
+                                {curveStyle}
+                            </button>
+                        ))}
                     </div>
                 )}
             </div>

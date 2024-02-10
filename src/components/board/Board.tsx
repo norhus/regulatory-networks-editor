@@ -24,6 +24,8 @@ const Board = () => {
     const [isPickingNodeShape, setIsPickingNodeShape] = useState(false)
     const [isPickingNodeDimensions, setIsPickingNodeDimensions] = useState(false)
     const [dimensions, setDimensions] = useState({ height: 30, width: 30 })
+    const [isPickingCurveStyle, setIsPickingCurveStyle] = useState(false)
+    const [currentCurveStyle, setCurrentCurveStyle] = useState<string>("unbundled-bezier")
     const [compartmentsMode, setCompartmentsMode] = useState(false)
     const [cdnd, setCdnd] = useState()
     const [ee, setEe] = useState()
@@ -40,7 +42,7 @@ const Board = () => {
 
             style: [
                 {
-                    selector: "node",
+                    selector: "node[label]",
                     style: {
                         label: "data(label)",
                         "text-valign": "top",
@@ -54,6 +56,15 @@ const Board = () => {
                         "border-width": 2,
                         "border-color": "black",
                         "background-color": "#999999",
+                        // "background-blacken": 0.3,
+                    },
+                },
+                {
+                    selector: "node:parent:selected",
+                    style: {
+                        "border-width": 2,
+                        "border-color": "black",
+                        "background-color": "#DDDDDD",
                         // "background-blacken": 0.3,
                     },
                 },
@@ -76,7 +87,7 @@ const Board = () => {
 
         cy.on("mousedown", "node", (e) => {
             // @ts-ignore
-            cy.nodes().noOverlap({ padding: 10 })
+            cy.nodes().noOverlap({ padding: 5 })
         })
 
         cy.on("dblclick", (e) => {
@@ -104,6 +115,7 @@ const Board = () => {
                 setIsPickingColor(false)
                 setIsPickingNodeShape(false)
                 setIsPickingNodeDimensions(false)
+                setIsPickingCurveStyle(false)
             }
         })
 
@@ -135,48 +147,38 @@ const Board = () => {
         initCytoscape()
     }, [])
 
+    const addEdgeToCy = (source: string, target: string, curveStyle: string) => {
+        if (
+            !cy
+                ?.edges()
+                .toArray()
+                .find((edge) => {
+                    return edge.data().source === source && edge.data().target === target
+                })
+        ) {
+            cy
+                ?.add({
+                    group: "edges",
+                    data: {
+                        source: source,
+                        target: target,
+                        label: `Edge from ${source} to ${target}`,
+                    },
+                    pannable: false,
+                })
+                .style({
+                    "curve-style": curveStyle,
+                })
+        }
+    }
+
     const addEdge = () => {
         const source = selectedNodes.current[0]
         if (selectedNodes.current.length === 1) {
-            const target = source
-            if (
-                !cy
-                    ?.edges()
-                    .toArray()
-                    .find((edge) => {
-                        return edge.data().source === source && edge.data().target === target
-                    })
-            ) {
-                cy?.add({
-                    group: "edges",
-                    data: {
-                        source: source,
-                        target: target,
-                        label: `Edge from ${source} to ${target}`,
-                    },
-                    pannable: false,
-                })
-            }
+            addEdgeToCy(source, source, currentCurveStyle)
         } else if (selectedNodes.current.length === 2) {
             const target = selectedNodes.current[1]
-            if (
-                !cy
-                    ?.edges()
-                    .toArray()
-                    .find((edge) => {
-                        return edge.data().source === source && edge.data().target === target
-                    })
-            ) {
-                cy?.add({
-                    group: "edges",
-                    data: {
-                        source: source,
-                        target: target,
-                        label: `Edge from ${source} to ${target}`,
-                    },
-                    pannable: false,
-                })
-            }
+            addEdgeToCy(source, target, currentCurveStyle)
         }
     }
 
@@ -225,6 +227,18 @@ const Board = () => {
         setIsPickingNodeDimensions(false)
     }
 
+    const onCurveStyleChange = (curveStyle: null | string = null) => {
+        if (curveStyle) {
+            const edgesToChange = cy?.edges(":selected").clone()
+
+            cy?.remove(cy?.edges(":selected"))
+            edgesToChange?.forEach((edge) => addEdgeToCy(edge.data().source, edge.data().target, curveStyle))
+
+            setCurrentCurveStyle(curveStyle)
+        }
+        setIsPickingCurveStyle(!isPickingCurveStyle)
+    }
+
     const onCreateCompartmentsClick = (enable: boolean) => {
         // @ts-ignore
         enable ? cdnd?.enable() : cdnd?.disable()
@@ -249,6 +263,8 @@ const Board = () => {
                 onConfirmDimensions={onConfirmDimensions}
                 compartmentsMode={compartmentsMode}
                 onCreateCompartmentsClick={onCreateCompartmentsClick}
+                isPickingCurveStyle={isPickingCurveStyle}
+                onCurveStyleChange={onCurveStyleChange}
             />
             <div className={classes.board} ref={graphRef} id={"cyBoard"} />
         </React.Fragment>
