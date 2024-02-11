@@ -27,12 +27,18 @@ const Board = () => {
     const [isPickingCurveStyle, setIsPickingCurveStyle] = useState(false)
     const [currentCurveStyle, setCurrentCurveStyle] = useState<string>("unbundled-bezier")
     const [compartmentsMode, setCompartmentsMode] = useState(false)
+    const [labelsVisible, setLabelsVisible] = useState(true)
     const [cdnd, setCdnd] = useState()
     const [ee, setEe] = useState()
 
     const graphRef = useRef(null)
     const selectedNodes = useRef<string[]>([])
     const numberOfNodes = useRef<number>(0)
+    const labelsVisibleRef = useRef(true)
+
+    useEffect(() => {
+        labelsVisibleRef.current = labelsVisible
+    }, [labelsVisible])
 
     const initCytoscape = () => {
         const cy = cytoscape({
@@ -48,6 +54,9 @@ const Board = () => {
                         "text-valign": "top",
                         "text-wrap": "ellipsis",
                         "text-max-width": "80",
+                        "text-background-color": "#FFFFFF",
+                        "text-background-opacity": 0.8,
+                        "text-background-shape": "roundrectangle",
                     },
                 },
                 {
@@ -97,6 +106,9 @@ const Board = () => {
                     group: "nodes",
                     data: { label: `Node_${nodeNumber}` },
                     position: e.position,
+                    style: {
+                        "text-opacity": labelsVisibleRef.current ? 1 : 0,
+                    },
                 })
                 numberOfNodes.current = nodeNumber
             }
@@ -166,9 +178,7 @@ const Board = () => {
                     },
                     pannable: false,
                 })
-                .style({
-                    "curve-style": curveStyle,
-                })
+                .style("curve-style", curveStyle)
         }
     }
 
@@ -245,6 +255,11 @@ const Board = () => {
         setCompartmentsMode(enable)
     }
 
+    const toggleLabelsVisibility = () => {
+        labelsVisible ? cy?.nodes().style("text-opacity", 0) : cy?.nodes().style("text-opacity", 1)
+        setLabelsVisible(!labelsVisible)
+    }
+
     return (
         <React.Fragment>
             <Menu
@@ -265,6 +280,8 @@ const Board = () => {
                 onCreateCompartmentsClick={onCreateCompartmentsClick}
                 isPickingCurveStyle={isPickingCurveStyle}
                 onCurveStyleChange={onCurveStyleChange}
+                labelsVisible={labelsVisible}
+                toggleLabelsVisibility={toggleLabelsVisibility}
             />
             <div className={classes.board} ref={graphRef} id={"cyBoard"} />
         </React.Fragment>

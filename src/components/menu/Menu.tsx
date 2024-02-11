@@ -21,6 +21,8 @@ interface Props {
     compartmentsMode: boolean
     isPickingCurveStyle: boolean
     onCurveStyleChange: (curveStyle?: string | null) => void
+    labelsVisible: boolean
+    toggleLabelsVisibility: () => void
 }
 
 const presetColors = ["#999999", "#ff0000", "#ff9100", "#ffff00", "#40ff00", "#00ffea", "#0048ff", "#a100ff", "#ff00ea"]
@@ -71,6 +73,8 @@ const Menu: React.FC<Props> = ({
     compartmentsMode,
     isPickingCurveStyle,
     onCurveStyleChange,
+    labelsVisible,
+    toggleLabelsVisibility,
 }) => {
     return (
         <div className={classes.menu}>
@@ -163,6 +167,11 @@ const Menu: React.FC<Props> = ({
                     </div>
                 )}
             </div>
+            <Button
+                title={labelsVisible ? "Hide labels" : "Show labels"}
+                onClick={toggleLabelsVisibility}
+                active={labelsVisible}
+            />
             <Button
                 title={"Create compartments"}
                 onClick={() => onCreateCompartmentsClick(!compartmentsMode)}
