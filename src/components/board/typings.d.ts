@@ -17,3 +17,8 @@ declare module "cytoscape-no-overlap" {
     const ext: cytoscape.Ext
     export = ext
 }
+
+declare module "cytoscape-grid-guide" {
+    const ext: cytoscape.Ext
+    export = ext
+}

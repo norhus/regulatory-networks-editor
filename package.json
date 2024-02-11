@@ -19,6 +19,7 @@
     "cytoscape-compound-drag-and-drop": "^1.1.0",
     "cytoscape-edge-editing": "^4.0.0",
     "cytoscape-edgehandles": "^4.0.1",
+    "cytoscape-grid-guide": "^2.3.3",
     "cytoscape-no-overlap": "^1.0.1",
     "jquery": "^3.7.1",
     "konva": "^7.0.3",

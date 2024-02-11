@@ -7,6 +7,7 @@ import noOverlap from "cytoscape-no-overlap"
 import edgeEditing from "cytoscape-edge-editing"
 import jquery from "jquery"
 import konva from "konva"
+import gridGuide from "cytoscape-grid-guide"
 
 // Make jquery globally available. This is required for
 // cytoscape-edge-editing to work.
@@ -16,6 +17,7 @@ import konva from "konva"
 ;(edgeEditing as any)(cytoscape, jquery, konva)
 cytoscape.use(compoundDragAndDrop)
 cytoscape.use(noOverlap)
+gridGuide(cytoscape)
 
 const Board = () => {
     const [cy, setCy] = useState<cytoscape.Core>()
@@ -30,6 +32,7 @@ const Board = () => {
     const [labelsVisible, setLabelsVisible] = useState(true)
     const [cdnd, setCdnd] = useState()
     const [ee, setEe] = useState()
+    const [gg, setGg] = useState()
 
     const graphRef = useRef(null)
     const selectedNodes = useRef<string[]>([])
@@ -54,6 +57,7 @@ const Board = () => {
                         "text-valign": "top",
                         "text-wrap": "ellipsis",
                         "text-max-width": "80",
+                        "font-size": 12,
                         "text-background-color": "#FFFFFF",
                         "text-background-opacity": 0.8,
                         "text-background-shape": "roundrectangle",
@@ -66,6 +70,16 @@ const Board = () => {
                         "border-color": "black",
                         "background-color": "#999999",
                         // "background-blacken": 0.3,
+                    },
+                },
+                {
+                    selector: "node:active",
+                    style: {
+                        "border-width": 2,
+                        "border-color": "black",
+                        "background-color": "#999999",
+                        "overlay-opacity": 0.1,
+                        "overlay-padding": 5,
                     },
                 },
                 {
@@ -91,12 +105,19 @@ const Board = () => {
                         "overlay-padding": 5,
                     },
                 },
+                {
+                    selector: "edge:active",
+                    style: {
+                        "overlay-opacity": 0.1,
+                        "overlay-padding": 5,
+                    },
+                },
             ],
         })
 
         cy.on("mousedown", "node", (e) => {
             // @ts-ignore
-            cy.nodes().noOverlap({ padding: 5 })
+            cy.nodes().noOverlap({ padding: 2.5 })
         })
 
         cy.on("dblclick", (e) => {
@@ -150,6 +171,16 @@ const Board = () => {
         // @ts-ignore
         cdnd.disable()
 
+        // @ts-ignore
+        const gg = cy.gridGuide({
+            snapToGridOnRelease: true,
+            snapToGridDuringDrag: false,
+            geometricGuideline: true,
+            gridSpacing: 40,
+            drawGrid: false,
+        })
+
+        setGg(gg)
         setEe(ee)
         setCdnd(cdnd)
         setCy(cy)
