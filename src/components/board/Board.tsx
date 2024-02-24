@@ -8,6 +8,7 @@ import edgeEditing from "cytoscape-edge-editing"
 import jquery from "jquery"
 import konva from "konva"
 import gridGuide from "cytoscape-grid-guide"
+import cytoscapeDagre from "cytoscape-dagre"
 
 // Make jquery globally available. This is required for
 // cytoscape-edge-editing to work.
@@ -18,6 +19,7 @@ import gridGuide from "cytoscape-grid-guide"
 cytoscape.use(compoundDragAndDrop)
 cytoscape.use(noOverlap)
 gridGuide(cytoscape)
+cytoscape.use(cytoscapeDagre)
 
 const Board = () => {
     const [cy, setCy] = useState<cytoscape.Core>()
@@ -30,6 +32,7 @@ const Board = () => {
     const [currentCurveStyle, setCurrentCurveStyle] = useState<string>("unbundled-bezier")
     const [compartmentsMode, setCompartmentsMode] = useState(false)
     const [labelsVisible, setLabelsVisible] = useState(true)
+    const [isPickingLayout, setIsPickingLayout] = useState(false)
     const [cdnd, setCdnd] = useState()
     const [ee, setEe] = useState()
     const [gg, setGg] = useState()
@@ -177,7 +180,9 @@ const Board = () => {
             snapToGridDuringDrag: false,
             geometricGuideline: true,
             gridSpacing: 40,
-            drawGrid: false,
+            drawGrid: true,
+            panGrid: true,
+            snapToGridCenter: false,
         })
 
         setGg(gg)
@@ -291,6 +296,17 @@ const Board = () => {
         setLabelsVisible(!labelsVisible)
     }
 
+    const onApplyLayout = (layout: null | string = null) => {
+        if (layout) {
+            if (cy?.nodes(":selected").length !== 0) {
+                cy?.nodes(":selected").layout({ name: layout }).run()
+            } else {
+                cy?.layout({ name: layout }).run()
+            }
+        }
+        setIsPickingLayout(!isPickingLayout)
+    }
+
     return (
         <React.Fragment>
             <Menu
@@ -313,6 +329,8 @@ const Board = () => {
                 onCurveStyleChange={onCurveStyleChange}
                 labelsVisible={labelsVisible}
                 toggleLabelsVisibility={toggleLabelsVisibility}
+                onApplyLayout={onApplyLayout}
+                isPickingLayout={isPickingLayout}
             />
             <div className={classes.board} ref={graphRef} id={"cyBoard"} />
         </React.Fragment>

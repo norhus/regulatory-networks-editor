@@ -23,6 +23,8 @@ interface Props {
     onCurveStyleChange: (curveStyle?: string | null) => void
     labelsVisible: boolean
     toggleLabelsVisibility: () => void
+    onApplyLayout: (layout?: string | null) => void
+    isPickingLayout: boolean
 }
 
 const presetColors = ["#999999", "#ff0000", "#ff9100", "#ffff00", "#40ff00", "#00ffea", "#0048ff", "#a100ff", "#ff00ea"]
@@ -54,6 +56,7 @@ const shapes = [
     "vee",
 ]
 const curveStyles = ["unbundled-bezier", "segments"]
+const layouts = ["random", "preset", "grid", "circle", "concentric", "breadthfirst", "cose", "dagre"]
 
 const Menu: React.FC<Props> = ({
     onAddEdgeClick,
@@ -75,6 +78,8 @@ const Menu: React.FC<Props> = ({
     onCurveStyleChange,
     labelsVisible,
     toggleLabelsVisibility,
+    onApplyLayout,
+    isPickingLayout,
 }) => {
     return (
         <div className={classes.menu}>
@@ -177,6 +182,23 @@ const Menu: React.FC<Props> = ({
                 onClick={() => onCreateCompartmentsClick(!compartmentsMode)}
                 active={compartmentsMode}
             />
+            <div className={classes.contentContainer}>
+                <Button title={"Apply layout"} onClick={() => onApplyLayout()} />
+                {isPickingLayout && (
+                    <div className={classes.dropdownContainer}>
+                        {layouts.map((layout) => (
+                            <button
+                                onClick={(e) => onApplyLayout(e.currentTarget.id)}
+                                className={classes.confirmButton}
+                                id={layout}
+                                key={layout}
+                            >
+                                {layout}
+                            </button>
+                        ))}
+                    </div>
+                )}
+            </div>
         </div>
     )
 }
