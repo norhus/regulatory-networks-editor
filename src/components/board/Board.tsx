@@ -44,6 +44,7 @@ const Board = () => {
     const [compartmentsMode, setCompartmentsMode] = useState(false)
     const [labelsVisible, setLabelsVisible] = useState(true)
     const [isPickingLayout, setIsPickingLayout] = useState(false)
+    const [gridEnabled, setGridEnabled] = useState(true)
     const [cdnd, setCdnd] = useState()
     const [ee, setEe] = useState()
     const [gg, setGg] = useState()
@@ -307,6 +308,37 @@ const Board = () => {
         setLabelsVisible(!labelsVisible)
     }
 
+    const toggleGrid = () => {
+        let gg
+
+        if (gridEnabled) {
+            // @ts-ignore
+            gg = cy?.gridGuide({
+                snapToGridOnRelease: false,
+                snapToGridDuringDrag: false,
+                geometricGuideline: false,
+                gridSpacing: 40,
+                drawGrid: false,
+                panGrid: true,
+                snapToGridCenter: false,
+            })
+        } else {
+            // @ts-ignore
+            gg = cy?.gridGuide({
+                snapToGridOnRelease: true,
+                snapToGridDuringDrag: false,
+                geometricGuideline: true,
+                gridSpacing: 40,
+                drawGrid: true,
+                panGrid: true,
+                snapToGridCenter: false,
+            })
+        }
+
+        setGg(gg)
+        setGridEnabled(!gridEnabled)
+    }
+
     const onApplyLayout = (layout: null | string = null) => {
         if (layout) {
             if (cy?.nodes(":selected").length !== 0) {
@@ -353,6 +385,8 @@ const Board = () => {
                 toggleLabelsVisibility={toggleLabelsVisibility}
                 onApplyLayout={onApplyLayout}
                 isPickingLayout={isPickingLayout}
+                gridEnabled={gridEnabled}
+                toggleGrid={toggleGrid}
             />
             <div className={classes.board} ref={graphRef} id={"cyBoard"} />
         </React.Fragment>

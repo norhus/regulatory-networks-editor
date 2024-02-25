@@ -25,6 +25,8 @@ interface Props {
     toggleLabelsVisibility: () => void
     onApplyLayout: (layout?: string | null) => void
     isPickingLayout: boolean
+    gridEnabled: boolean
+    toggleGrid: () => void
 }
 
 const presetColors = ["#999999", "#ff0000", "#ff9100", "#ffff00", "#40ff00", "#00ffea", "#0048ff", "#a100ff", "#ff00ea"]
@@ -80,6 +82,8 @@ const Menu: React.FC<Props> = ({
     toggleLabelsVisibility,
     onApplyLayout,
     isPickingLayout,
+    gridEnabled,
+    toggleGrid,
 }) => {
     return (
         <div className={classes.menu}>
@@ -172,16 +176,6 @@ const Menu: React.FC<Props> = ({
                     </div>
                 )}
             </div>
-            <Button
-                title={labelsVisible ? "Hide labels" : "Show labels"}
-                onClick={toggleLabelsVisibility}
-                active={labelsVisible}
-            />
-            <Button
-                title={"Create compartments"}
-                onClick={() => onCreateCompartmentsClick(!compartmentsMode)}
-                active={compartmentsMode}
-            />
             <div className={classes.contentContainer}>
                 <Button title={"Apply layout"} onClick={() => onApplyLayout()} />
                 {isPickingLayout && (
@@ -199,6 +193,17 @@ const Menu: React.FC<Props> = ({
                     </div>
                 )}
             </div>
+            <Button
+                title={labelsVisible ? "Hide labels" : "Show labels"}
+                onClick={toggleLabelsVisibility}
+                active={labelsVisible}
+            />
+            <Button
+                title={"Create compartments"}
+                onClick={() => onCreateCompartmentsClick(!compartmentsMode)}
+                active={compartmentsMode}
+            />
+            <Button title={gridEnabled ? "Disable grid" : "Enable grid"} onClick={toggleGrid} active={gridEnabled} />
         </div>
     )
 }
