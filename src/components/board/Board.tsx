@@ -28,8 +28,8 @@ const layouts: any = {
     circle: { name: "circle" },
     concentric: { name: "concentric" },
     breadthfirst: { name: "breadthfirst", directed: true },
-    cose: { name: "cose" },
-    dagre: { name: "dagre", animated: false },
+    cose: { name: "cose", animate: false },
+    dagre: { name: "dagre" },
 }
 
 const Board = () => {
@@ -164,6 +164,7 @@ const Board = () => {
                 setIsPickingNodeShape(false)
                 setIsPickingNodeDimensions(false)
                 setIsPickingCurveStyle(false)
+                setIsPickingLayout(false)
             }
         })
 
@@ -309,33 +310,22 @@ const Board = () => {
     }
 
     const toggleGrid = () => {
-        let gg
-
         if (gridEnabled) {
             // @ts-ignore
-            gg = cy?.gridGuide({
+            cy?.gridGuide({
                 snapToGridOnRelease: false,
-                snapToGridDuringDrag: false,
                 geometricGuideline: false,
-                gridSpacing: 40,
                 drawGrid: false,
-                panGrid: true,
-                snapToGridCenter: false,
             })
         } else {
             // @ts-ignore
-            gg = cy?.gridGuide({
+            cy?.gridGuide({
                 snapToGridOnRelease: true,
-                snapToGridDuringDrag: false,
                 geometricGuideline: true,
-                gridSpacing: 40,
                 drawGrid: true,
-                panGrid: true,
-                snapToGridCenter: false,
             })
         }
 
-        setGg(gg)
         setGridEnabled(!gridEnabled)
     }
 
@@ -356,6 +346,18 @@ const Board = () => {
                 }
             } else {
                 cy?.layout(layouts[layout]).run()
+            }
+
+            if (gridEnabled) {
+                // @ts-ignore
+                cy?.gridGuide({
+                    snapToGridOnRelease: false,
+                })
+
+                // @ts-ignore
+                cy?.gridGuide({
+                    snapToGridOnRelease: true,
+                })
             }
         }
         setIsPickingLayout(!isPickingLayout)
