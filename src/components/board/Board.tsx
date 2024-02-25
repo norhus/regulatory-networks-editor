@@ -21,6 +21,17 @@ cytoscape.use(noOverlap)
 gridGuide(cytoscape)
 cytoscape.use(cytoscapeDagre)
 
+const layouts: any = {
+    random: { name: "random" },
+    preset: { name: "preset" },
+    grid: { name: "grid" },
+    circle: { name: "circle" },
+    concentric: { name: "concentric" },
+    breadthfirst: { name: "breadthfirst", directed: true },
+    cose: { name: "cose" },
+    dagre: { name: "dagre", animated: false },
+}
+
 const Board = () => {
     const [cy, setCy] = useState<cytoscape.Core>()
     const [isPickingColor, setIsPickingColor] = useState(false)
@@ -299,9 +310,20 @@ const Board = () => {
     const onApplyLayout = (layout: null | string = null) => {
         if (layout) {
             if (cy?.nodes(":selected").length !== 0) {
-                cy?.nodes(":selected").layout({ name: layout }).run()
+                if (["dagre", "breadthfirst"].includes(layout)) {
+                    const unselectedNodes = cy?.nodes(":unselected").clone()
+                    const unselectedConnectedEdges = cy?.nodes(":unselected").connectedEdges()
+
+                    cy?.remove(cy?.nodes(":unselected"))
+                    cy?.layout(layouts[layout]).run()
+
+                    cy?.add(unselectedNodes as cytoscape.NodeCollection)
+                    cy?.add(unselectedConnectedEdges as cytoscape.EdgeCollection)
+                } else {
+                    cy?.nodes(":selected").layout(layouts[layout]).run()
+                }
             } else {
-                cy?.layout({ name: layout }).run()
+                cy?.layout(layouts[layout]).run()
             }
         }
         setIsPickingLayout(!isPickingLayout)
