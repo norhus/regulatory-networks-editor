@@ -9,6 +9,11 @@ import jquery from "jquery"
 import konva from "konva"
 import gridGuide from "cytoscape-grid-guide"
 import cytoscapeDagre from "cytoscape-dagre"
+import panzoom from "cytoscape-panzoom"
+import "../../../node_modules/cytoscape-panzoom/cytoscape.js-panzoom.css"
+import navigator from "cytoscape-navigator"
+import "../../../node_modules/cytoscape-navigator/cytoscape.js-navigator.css"
+import "../../../node_modules/cytoscape-panzoom/font-awesome-4.0.3/css/font-awesome.css"
 
 // Make jquery globally available. This is required for
 // cytoscape-edge-editing to work.
@@ -20,6 +25,8 @@ cytoscape.use(compoundDragAndDrop)
 cytoscape.use(noOverlap)
 gridGuide(cytoscape)
 cytoscape.use(cytoscapeDagre)
+panzoom(cytoscape)
+navigator(cytoscape)
 
 const layouts: any = {
     random: { name: "random" },
@@ -61,8 +68,10 @@ const Board = () => {
     const initCytoscape = () => {
         const cy = cytoscape({
             container: graphRef.current,
-            maxZoom: 1,
+            maxZoom: 10,
+            minZoom: 0.1,
             selectionType: "additive",
+            wheelSensitivity: 0.1,
 
             style: [
                 {
@@ -197,6 +206,12 @@ const Board = () => {
             panGrid: true,
             snapToGridCenter: false,
         })
+
+        // @ts-ignore
+        cy.panzoom()
+
+        // @ts-ignore
+        cy.navigator()
 
         setGg(gg)
         setEe(ee)

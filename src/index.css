@@ -11,3 +11,15 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.cy-panzoom {
+  right: 55px;
+  top: 10px
+}
+
+.cytoscape-navigator {
+  width: 200px !important;
+  height: 200px !important;
+  right: 10px !important;
+  bottom: 10px !important;
+}

@@ -22,3 +22,13 @@ declare module "cytoscape-grid-guide" {
     const ext: cytoscape.Ext
     export = ext
 }
+
+declare module "cytoscape-panzoom" {
+    const ext: cytoscape.Ext
+    export = ext
+}
+
+declare module "cytoscape-navigator" {
+    const ext: cytoscape.Ext
+    export = ext
+}
