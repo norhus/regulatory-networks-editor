@@ -27,6 +27,7 @@ interface Props {
     isPickingLayout: boolean
     gridEnabled: boolean
     toggleGrid: () => void
+    changeSpacing: (increase: boolean) => void
 }
 
 const presetColors = ["#999999", "#ff0000", "#ff9100", "#ffff00", "#40ff00", "#00ffea", "#0048ff", "#a100ff", "#ff00ea"]
@@ -84,6 +85,7 @@ const Menu: React.FC<Props> = ({
     isPickingLayout,
     gridEnabled,
     toggleGrid,
+    changeSpacing,
 }) => {
     return (
         <div className={classes.menu}>
@@ -204,6 +206,8 @@ const Menu: React.FC<Props> = ({
                 active={compartmentsMode}
             />
             <Button title={gridEnabled ? "Disable grid" : "Enable grid"} onClick={toggleGrid} active={gridEnabled} />
+            <Button title={"Increase spacing"} onClick={() => changeSpacing(true)} />
+            <Button title={"Decrease spacing"} onClick={() => changeSpacing(false)} />
         </div>
     )
 }

@@ -67,6 +67,7 @@ const Board = () => {
 
     const initCytoscape = () => {
         const cy = cytoscape({
+            layout: layouts.preset,
             container: graphRef.current,
             maxZoom: 10,
             minZoom: 0.1,
@@ -378,6 +379,37 @@ const Board = () => {
         setIsPickingLayout(!isPickingLayout)
     }
 
+    const changeSpacing = (increase: boolean = false) => {
+        if (cy?.nodes(":selected").length !== 0) {
+            cy
+                ?.nodes(":selected")
+                .layout({
+                    name: "preset",
+                    spacingFactor: increase ? 2 : 0.5,
+                })
+                .run()
+        } else {
+            cy
+                ?.layout({
+                    name: "preset",
+                    spacingFactor: increase ? 2 : 0.5,
+                })
+                .run()
+        }
+
+        if (gridEnabled) {
+            // @ts-ignore
+            cy?.gridGuide({
+                snapToGridOnRelease: false,
+            })
+
+            // @ts-ignore
+            cy?.gridGuide({
+                snapToGridOnRelease: true,
+            })
+        }
+    }
+
     return (
         <React.Fragment>
             <Menu
@@ -404,6 +436,7 @@ const Board = () => {
                 isPickingLayout={isPickingLayout}
                 gridEnabled={gridEnabled}
                 toggleGrid={toggleGrid}
+                changeSpacing={changeSpacing}
             />
             <div className={classes.board} ref={graphRef} id={"cyBoard"} />
         </React.Fragment>
