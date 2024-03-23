@@ -17,7 +17,6 @@ import "../../../node_modules/cytoscape-panzoom/font-awesome-4.0.3/css/font-awes
 
 // Make jquery globally available. This is required for
 // cytoscape-edge-editing to work.
-import { log } from "node:util"
 ;(global as any).$ = (global as any).jQuery = jquery
 // Types seem to work poorly for this module, so we register it
 // like this to avoid issues.
