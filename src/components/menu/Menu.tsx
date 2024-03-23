@@ -28,6 +28,8 @@ interface Props {
     gridEnabled: boolean
     toggleGrid: () => void
     changeSpacing: (increase: boolean) => void
+    onImportClick: () => void
+    onExportClick: () => void
 }
 
 const presetColors = ["#999999", "#ff0000", "#ff9100", "#ffff00", "#40ff00", "#00ffea", "#0048ff", "#a100ff", "#ff00ea"]
@@ -86,6 +88,8 @@ const Menu: React.FC<Props> = ({
     gridEnabled,
     toggleGrid,
     changeSpacing,
+    onImportClick,
+    onExportClick,
 }) => {
     return (
         <div className={classes.menu}>
@@ -208,6 +212,8 @@ const Menu: React.FC<Props> = ({
             <Button title={gridEnabled ? "Disable grid" : "Enable grid"} onClick={toggleGrid} active={gridEnabled} />
             <Button title={"Increase spacing"} onClick={() => changeSpacing(true)} />
             <Button title={"Decrease spacing"} onClick={() => changeSpacing(false)} />
+            <Button title={"Import graph"} onClick={onImportClick} />
+            <Button title={"Export graph"} onClick={onExportClick} />
         </div>
     )
 }

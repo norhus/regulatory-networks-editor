@@ -17,6 +17,7 @@ import "../../../node_modules/cytoscape-panzoom/font-awesome-4.0.3/css/font-awes
 
 // Make jquery globally available. This is required for
 // cytoscape-edge-editing to work.
+import { log } from "node:util"
 ;(global as any).$ = (global as any).jQuery = jquery
 // Types seem to work poorly for this module, so we register it
 // like this to avoid issues.
@@ -60,6 +61,7 @@ const Board = () => {
     const selectedNodes = useRef<string[]>([])
     const numberOfNodes = useRef<number>(0)
     const labelsVisibleRef = useRef(true)
+    const inputFile = useRef<HTMLInputElement | null>(null)
 
     useEffect(() => {
         labelsVisibleRef.current = labelsVisible
@@ -410,6 +412,55 @@ const Board = () => {
         }
     }
 
+    const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { files } = event.target
+
+        if (files && files.length !== 0) {
+            const file = files[0]
+            const fileReader = new FileReader()
+            fileReader.readAsText(file)
+            fileReader.onloadstart = (event: ProgressEvent<FileReader>) => {
+                cy?.remove(cy?.elements())
+            }
+            fileReader.onloadend = (ev: ProgressEvent<FileReader>) => {
+                JSON.parse(fileReader.result as string).map((element: any) => {
+                    element.group === "nodes"
+                        ? cy?.add(element)
+                        : cy?.add(element).style("curve-style", element.curveStyle)
+                })
+                event.target.value = ""
+            }
+        }
+    }
+
+    const onImportClick = () => {
+        inputFile.current?.click()
+    }
+
+    const onExportClick = () => {
+        const exportJson = `data:text/json;chatset=utf-8,${encodeURIComponent(
+            JSON.stringify(
+                cy?.elements().map((element) => {
+                    return {
+                        ...(element.json() as Object),
+                        style:
+                            element.group() === "nodes"
+                                ? { ...element.style() }
+                                : {
+                                      "line-color": element.style()["line-color"],
+                                  },
+                        curveStyle: element.style()["curve-style"],
+                    }
+                }),
+            ),
+        )}`
+        const link = document.createElement("a")
+        link.href = exportJson
+        link.download = "data.json"
+
+        link.click()
+    }
+
     return (
         <React.Fragment>
             <Menu
@@ -437,8 +488,17 @@ const Board = () => {
                 gridEnabled={gridEnabled}
                 toggleGrid={toggleGrid}
                 changeSpacing={changeSpacing}
+                onImportClick={onImportClick}
+                onExportClick={onExportClick}
             />
             <div className={classes.board} ref={graphRef} id={"cyBoard"} />
+            <input
+                style={{ display: "none" }}
+                accept=".json,.txt"
+                ref={inputFile}
+                onChange={handleFileUpload}
+                type="file"
+            />
         </React.Fragment>
     )
 }
