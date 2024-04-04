@@ -460,6 +460,11 @@ const Board = () => {
         link.click()
     }
 
+    const onRemoveSelectedClick = () => {
+        cy?.remove(cy?.elements(":selected"))
+        selectedNodes.current = []
+    }
+
     return (
         <React.Fragment>
             <Menu
@@ -489,6 +494,7 @@ const Board = () => {
                 changeSpacing={changeSpacing}
                 onImportClick={onImportClick}
                 onExportClick={onExportClick}
+                onRemoveSelectedClick={onRemoveSelectedClick}
             />
             <div className={classes.board} ref={graphRef} id={"cyBoard"} />
             <input
