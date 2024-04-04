@@ -31,6 +31,7 @@ interface Props {
     onImportClick: () => void
     onExportClick: () => void
     onRemoveSelectedClick: () => void
+    resetBoard: () => void
 }
 
 const presetColors = ["#999999", "#ff0000", "#ff9100", "#ffff00", "#40ff00", "#00ffea", "#0048ff", "#a100ff", "#ff00ea"]
@@ -92,11 +93,13 @@ const Menu: React.FC<Props> = ({
     onImportClick,
     onExportClick,
     onRemoveSelectedClick,
+    resetBoard,
 }) => {
     return (
         <div className={classes.menu}>
             <Button title={"Add edge"} onClick={onAddEdgeClick} />
             <Button title={"Remove selected"} onClick={onRemoveSelectedClick} />
+            <Button title={"Reset board"} onClick={resetBoard} />
             <div className={classes.contentContainer}>
                 <Button title={"Change color"} onClick={onChangeColorClick} />
                 {isPickingColor && (

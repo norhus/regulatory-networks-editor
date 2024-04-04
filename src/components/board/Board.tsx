@@ -422,12 +422,14 @@ const Board = () => {
                 cy?.remove(cy?.elements())
             }
             fileReader.onloadend = (ev: ProgressEvent<FileReader>) => {
-                JSON.parse(fileReader.result as string).map((element: any) => {
+                const json = JSON.parse(fileReader.result as string)
+                json.map((element: any) => {
                     element.group === "nodes"
-                        ? cy?.add(element)
+                        ? cy?.add(element).style("text-opacity", labelsVisibleRef.current ? 1 : 0)
                         : cy?.add(element).style("curve-style", element.curveStyle)
                 })
                 event.target.value = ""
+                numberOfNodes.current = cy?.nodes().length ?? 0
             }
         }
     }
@@ -437,22 +439,48 @@ const Board = () => {
     }
 
     const onExportClick = () => {
-        const exportJson = `data:text/json;chatset=utf-8,${encodeURIComponent(
-            JSON.stringify(
-                cy?.elements().map((element) => {
-                    return {
-                        ...(element.json() as Object),
-                        style:
-                            element.group() === "nodes"
-                                ? { ...element.style() }
-                                : {
-                                      "line-color": element.style()["line-color"],
-                                  },
-                        curveStyle: element.style()["curve-style"],
-                    }
-                }),
-            ),
-        )}`
+        const parentNodes = cy?.nodes().filter((node) => node.isParent())
+        const nonParentNodes = cy?.nodes().filter((node) => !node.isParent())
+        let exportNodes: any[] = []
+        if (parentNodes) {
+            exportNodes = parentNodes.map((element) => ({
+                ...(element.json() as Object),
+                style: {
+                    "background-color": element.style()["background-color"],
+                    "background-opacity": element.style()["background-opacity"],
+                    shape: element.style()["shape"],
+                    height: element.style()["height"],
+                    width: element.style()["width"],
+                },
+            }))
+        }
+        if (nonParentNodes) {
+            exportNodes = [
+                ...exportNodes,
+                ...nonParentNodes.map((element) => ({
+                    ...(element.json() as Object),
+                    style: {
+                        "background-color": element.style()["background-color"],
+                        "background-opacity": element.style()["background-opacity"],
+                        shape: element.style()["shape"],
+                        height: element.style()["height"],
+                        width: element.style()["width"],
+                    },
+                })),
+            ]
+        }
+        const exportElements = [
+            ...exportNodes,
+            cy?.edges().map((element) => ({
+                ...(element.json() as Object),
+                style: {
+                    "line-color": element.style()["line-color"],
+                    "line-opacity": element.style()["line-opacity"],
+                },
+                curveStyle: element.style()["curve-style"],
+            })),
+        ]
+        const exportJson = `data:text/json;chatset=utf-8,${encodeURIComponent(JSON.stringify(exportElements))}`
         const link = document.createElement("a")
         link.href = exportJson
         link.download = "data.json"
@@ -463,6 +491,12 @@ const Board = () => {
     const onRemoveSelectedClick = () => {
         cy?.remove(cy?.elements(":selected"))
         selectedNodes.current = []
+    }
+
+    const resetBoard = () => {
+        cy?.remove(cy?.elements())
+        selectedNodes.current = []
+        numberOfNodes.current = 0
     }
 
     return (
@@ -495,6 +529,7 @@ const Board = () => {
                 onImportClick={onImportClick}
                 onExportClick={onExportClick}
                 onRemoveSelectedClick={onRemoveSelectedClick}
+                resetBoard={resetBoard}
             />
             <div className={classes.board} ref={graphRef} id={"cyBoard"} />
             <input
