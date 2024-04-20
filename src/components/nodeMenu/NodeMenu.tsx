@@ -50,7 +50,7 @@ const NodeMenu: React.FC<Props> = ({ onConfirm }) => {
                     })
                     return (
                         <button
-                            onClick={(e) => (shape === selectedShape ? setSelectedShape("") : setSelectedShape(shape))}
+                            onClick={() => (shape === selectedShape ? setSelectedShape("") : setSelectedShape(shape))}
                             className={shapeButtonStyles}
                             id={shape}
                             key={shape}
