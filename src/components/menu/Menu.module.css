@@ -1,6 +1,7 @@
 .menu {
     display: flex;
     height: 50px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
 }
 
 .button {
@@ -13,7 +14,7 @@
 }
 
 .button:hover {
-    background-color: #838383;
+    background-color: #dadada;
     cursor: pointer;
 }
 
@@ -22,7 +23,7 @@
 }
 
 .activeButton:hover {
-    background-color: #59c84f;
+    background-color: #66e85d;
 }
 
 .unactiveButton {
@@ -30,82 +31,5 @@
 }
 
 .unactiveButton:hover {
-    background-color: #c35151;
-}
-
-.contentContainer {
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
-    justify-content: center;
-}
-
-.contentSubContainer {
-    display: flex;
-    flex-wrap: wrap;
-    background-color: #F0F0F0FF;
-    border-radius: 9px;
-    z-index: 1000;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    max-width: 300px;
-    place-content: center;
-    margin: 0 4px;
-}
-
-.colorPicker {
-    width: 100% !important;
-}
-
-.colorPickerSwatches {
-    display: flex;
-    padding: 8px 12px;
-    flex-wrap: wrap;
-}
-
-.swatch {
-    width: 24px;
-    height: 24px;
-    margin: 4px;
-    border: none;
-    padding: 0;
-    border-radius: 4px;
-    cursor: pointer;
-    outline: none;
-}
-
-.confirmButton {
-    width: 100%;
-    height: 30px;
-    border: none;
-    justify-content: center;
-    align-items: center;
-    background-color: #F0F0F0FF;
-    margin: 4px;
-    border-radius: 4px;
-}
-
-.confirmButton:hover {
-    background-color: #838383;
-    cursor: pointer;
-}
-
-.dropdownContainer {
-    display: flex;
-    flex-wrap: wrap;
-    background-color: #F0F0F0FF;
-    border-radius: 9px;
-    z-index: 1000;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    max-width: 300px;
-    max-height: 200px;
-    overflow: auto;
-    margin: 0 4px;
-}
-
-.dimensionInput {
-    width: 100%;
-    height: 25px;
-    border: none;
-    margin: 8px;
-    border-radius: 4px;
+    background-color: #e85d5d;
 }

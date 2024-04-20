@@ -23,3 +23,7 @@ code {
   right: 10px !important;
   bottom: 10px !important;
 }
+
+.react-colorful__pointer {
+  cursor: pointer;
+}

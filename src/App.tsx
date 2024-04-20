@@ -1,11 +1,11 @@
 import React from "react"
 import classes from "./App.module.css"
-import Main from "./components/Main"
+import Board from "./components/board/Board"
 
 const App: React.FC = () => {
     return (
         <div className={classes.app}>
-            <Main />
+            <Board />
         </div>
     )
 }

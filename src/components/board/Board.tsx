@@ -17,6 +17,9 @@ import "../../../node_modules/cytoscape-panzoom/font-awesome-4.0.3/css/font-awes
 
 // Make jquery globally available. This is required for
 // cytoscape-edge-editing to work.
+import NodeMenu from "../nodeMenu/NodeMenu"
+import EdgeMenu from "../edgeMenu/EdgeMenu"
+import LayoutMenu from "../layoutMenu/LayoutMenu"
 ;(global as any).$ = (global as any).jQuery = jquery
 // Types seem to work poorly for this module, so we register it
 // like this to avoid issues.
@@ -41,16 +44,12 @@ const layouts: any = {
 
 const Board = () => {
     const [cy, setCy] = useState<cytoscape.Core>()
-    const [isPickingColor, setIsPickingColor] = useState(false)
-    const [color, setColor] = useState<string>("999999")
-    const [isPickingNodeShape, setIsPickingNodeShape] = useState(false)
-    const [isPickingNodeDimensions, setIsPickingNodeDimensions] = useState(false)
-    const [dimensions, setDimensions] = useState({ height: 30, width: 30 })
-    const [isPickingCurveStyle, setIsPickingCurveStyle] = useState(false)
+    const [isCustomizingNodes, setIsCustomizingNodes] = useState(false)
+    const [isCustomizingEdges, setIsCustomizingEdges] = useState(false)
+    const [isApplyingLayout, setIsApplyingLayout] = useState(false)
     const [currentCurveStyle, setCurrentCurveStyle] = useState<string>("unbundled-bezier")
     const [compartmentsMode, setCompartmentsMode] = useState(false)
     const [labelsVisible, setLabelsVisible] = useState(true)
-    const [isPickingLayout, setIsPickingLayout] = useState(false)
     const [gridEnabled, setGridEnabled] = useState(true)
     const [cdnd, setCdnd] = useState()
     const [ee, setEe] = useState()
@@ -169,16 +168,6 @@ const Board = () => {
             selectedNodes.current = selectedNodes.current.filter((node) => node !== e.target.data().id)
         })
 
-        cy.on("click", (e) => {
-            if (e.target === cy) {
-                setIsPickingColor(false)
-                setIsPickingNodeShape(false)
-                setIsPickingNodeDimensions(false)
-                setIsPickingCurveStyle(false)
-                setIsPickingLayout(false)
-            }
-        })
-
         // So far, we use the default parameters for edge editing.
         const ee = (cy as any).edgeEditing({})
         // Edge editing *always* registers a context-tap listener
@@ -258,63 +247,6 @@ const Board = () => {
         }
     }
 
-    const onColorChange = (color: string) => {
-        setColor(color)
-    }
-
-    const onConfirmColor = () => {
-        let opacity = 1
-        let currentColor = color
-        if (color.length > 7) {
-            opacity = Math.round((parseInt(color.slice(-2), 16) / 255) * 100) / 100
-            currentColor = currentColor.slice(0, -2)
-        }
-        cy?.nodes(":selected").style({
-            "background-color": currentColor,
-            "background-opacity": opacity,
-        })
-        cy?.edges(":selected").style({
-            "line-color": currentColor,
-            "line-opacity": opacity,
-        })
-        setIsPickingColor(false)
-    }
-
-    const onShapeChange = (shape: null | string = null) => {
-        if (shape) {
-            cy?.nodes(":selected").style({
-                shape: shape,
-            })
-        }
-        setIsPickingNodeShape(!isPickingNodeShape)
-    }
-
-    const onDimensionsChange = (dimensions: { height: number; width: number }) => {
-        if (dimensions.height && dimensions.width && dimensions.height >= 30 && dimensions.width >= 30) {
-            setDimensions(dimensions)
-        }
-    }
-
-    const onConfirmDimensions = () => {
-        cy?.nodes(":selected").style({
-            height: dimensions.height,
-            width: dimensions.width,
-        })
-        setIsPickingNodeDimensions(false)
-    }
-
-    const onCurveStyleChange = (curveStyle: null | string = null) => {
-        if (curveStyle) {
-            const edgesToChange = cy?.edges(":selected").clone()
-
-            cy?.remove(cy?.edges(":selected"))
-            edgesToChange?.forEach((edge) => addEdgeToCy(edge.data().source, edge.data().target, curveStyle))
-
-            setCurrentCurveStyle(curveStyle)
-        }
-        setIsPickingCurveStyle(!isPickingCurveStyle)
-    }
-
     const onCreateCompartmentsClick = (enable: boolean) => {
         // @ts-ignore
         enable ? cdnd?.enable() : cdnd?.disable()
@@ -344,40 +276,6 @@ const Board = () => {
         }
 
         setGridEnabled(!gridEnabled)
-    }
-
-    const onApplyLayout = (layout: null | string = null) => {
-        if (layout) {
-            if (cy?.nodes(":selected").length !== 0) {
-                if (["dagre", "breadthfirst"].includes(layout)) {
-                    const unselectedNodes = cy?.nodes(":unselected").clone()
-                    const unselectedConnectedEdges = cy?.nodes(":unselected").connectedEdges()
-
-                    cy?.remove(cy?.nodes(":unselected"))
-                    cy?.layout(layouts[layout]).run()
-
-                    cy?.add(unselectedNodes as cytoscape.NodeCollection)
-                    cy?.add(unselectedConnectedEdges as cytoscape.EdgeCollection)
-                } else {
-                    cy?.nodes(":selected").layout(layouts[layout]).run()
-                }
-            } else {
-                cy?.layout(layouts[layout]).run()
-            }
-
-            if (gridEnabled) {
-                // @ts-ignore
-                cy?.gridGuide({
-                    snapToGridOnRelease: false,
-                })
-
-                // @ts-ignore
-                cy?.gridGuide({
-                    snapToGridOnRelease: true,
-                })
-            }
-        }
-        setIsPickingLayout(!isPickingLayout)
     }
 
     const changeSpacing = (increase: boolean = false) => {
@@ -499,30 +397,118 @@ const Board = () => {
         numberOfNodes.current = 0
     }
 
+    const onConfirmNodeCustomization = (
+        color: string,
+        dimensions: { height: number; width: number },
+        shape: string,
+    ) => {
+        let opacity = 1
+        let currentColor = color
+        if (color.length > 7) {
+            opacity = Math.round((parseInt(color.slice(-2), 16) / 255) * 100) / 100
+            currentColor = currentColor.slice(0, -2)
+        }
+        cy?.nodes(":selected").style({
+            "background-color": currentColor,
+            "background-opacity": opacity,
+        })
+        if (shape !== "") {
+            cy?.nodes(":selected").style({
+                shape: shape,
+            })
+        }
+        cy?.nodes(":selected").style({
+            height: dimensions.height,
+            width: dimensions.width,
+        })
+        setIsCustomizingNodes(false)
+    }
+
+    const onConfirmEdgeCustomization = (color: string, curveStyle: string) => {
+        let opacity = 1
+        let currentColor = color
+        if (color.length > 7) {
+            opacity = Math.round((parseInt(color.slice(-2), 16) / 255) * 100) / 100
+            currentColor = currentColor.slice(0, -2)
+        }
+        cy?.edges(":selected").style({
+            "line-color": currentColor,
+            "line-opacity": opacity,
+        })
+        if (curveStyle !== "") {
+            const edgesToChange = cy?.edges(":selected").clone()
+
+            cy?.remove(cy?.edges(":selected"))
+            edgesToChange?.forEach((edge) => addEdgeToCy(edge.data().source, edge.data().target, curveStyle))
+
+            setCurrentCurveStyle(curveStyle)
+        }
+        setIsCustomizingEdges(false)
+    }
+
+    const onConfirmLayout = (layout: string) => {
+        if (layout !== "") {
+            if (cy?.nodes(":selected").length !== 0) {
+                if (["dagre", "breadthfirst"].includes(layout)) {
+                    const unselectedNodes = cy?.nodes(":unselected").clone()
+                    const unselectedConnectedEdges = cy?.nodes(":unselected").connectedEdges()
+
+                    cy?.remove(cy?.nodes(":unselected"))
+                    cy?.layout(layouts[layout]).run()
+
+                    cy?.add(unselectedNodes as cytoscape.NodeCollection)
+                    cy?.add(unselectedConnectedEdges as cytoscape.EdgeCollection)
+                } else {
+                    cy?.nodes(":selected").layout(layouts[layout]).run()
+                }
+            } else {
+                cy?.layout(layouts[layout]).run()
+            }
+
+            if (gridEnabled) {
+                // @ts-ignore
+                cy?.gridGuide({
+                    snapToGridOnRelease: false,
+                })
+
+                // @ts-ignore
+                cy?.gridGuide({
+                    snapToGridOnRelease: true,
+                })
+            }
+        }
+        setIsApplyingLayout(false)
+    }
+
+    const onCustomizeNodes = () => {
+        setIsCustomizingEdges(false)
+        setIsApplyingLayout(false)
+        setIsCustomizingNodes(!isCustomizingNodes)
+    }
+
+    const onCustomizeEdges = () => {
+        setIsCustomizingNodes(false)
+        setIsApplyingLayout(false)
+        setIsCustomizingEdges(!isCustomizingEdges)
+    }
+
+    const onApplyLayout = () => {
+        setIsCustomizingNodes(false)
+        setIsCustomizingEdges(false)
+        setIsApplyingLayout(!isApplyingLayout)
+    }
+
     return (
         <React.Fragment>
             <Menu
                 onAddEdgeClick={addEdge}
-                isPickingColor={isPickingColor}
-                color={color}
-                onChangeColorClick={() => setIsPickingColor(!isPickingColor)}
-                onColorChange={onColorChange}
-                onConfirmColor={onConfirmColor}
-                isPickingNodeShape={isPickingNodeShape}
-                onShapeChange={onShapeChange}
-                dimensions={dimensions}
-                isPickingNodeDimensions={isPickingNodeDimensions}
-                onChangeDimensionsClick={() => setIsPickingNodeDimensions(!isPickingNodeDimensions)}
-                onDimensionsChange={onDimensionsChange}
-                onConfirmDimensions={onConfirmDimensions}
+                onCustomizeNodes={onCustomizeNodes}
+                onCustomizeEdges={onCustomizeEdges}
                 compartmentsMode={compartmentsMode}
                 onCreateCompartmentsClick={onCreateCompartmentsClick}
-                isPickingCurveStyle={isPickingCurveStyle}
-                onCurveStyleChange={onCurveStyleChange}
                 labelsVisible={labelsVisible}
                 toggleLabelsVisibility={toggleLabelsVisibility}
                 onApplyLayout={onApplyLayout}
-                isPickingLayout={isPickingLayout}
                 gridEnabled={gridEnabled}
                 toggleGrid={toggleGrid}
                 changeSpacing={changeSpacing}
@@ -531,6 +517,9 @@ const Board = () => {
                 onRemoveSelectedClick={onRemoveSelectedClick}
                 resetBoard={resetBoard}
             />
+            {isCustomizingNodes && <NodeMenu onConfirm={onConfirmNodeCustomization} />}
+            {isCustomizingEdges && <EdgeMenu onConfirm={onConfirmEdgeCustomization} />}
+            {isApplyingLayout && <LayoutMenu onConfirm={onConfirmLayout} />}
             <div className={classes.board} ref={graphRef} id={"cyBoard"} />
             <input
                 style={{ display: "none" }}
