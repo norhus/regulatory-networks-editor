@@ -321,11 +321,11 @@ const Board = () => {
             }
             fileReader.onloadend = (ev: ProgressEvent<FileReader>) => {
                 const json = JSON.parse(fileReader.result as string)
-                json.map((element: any) => {
+                json.map((element: any) =>
                     element.group === "nodes"
                         ? cy?.add(element).style("text-opacity", labelsVisibleRef.current ? 1 : 0)
-                        : cy?.add(element).style("curve-style", element.curveStyle)
-                })
+                        : cy?.add(element).style("curve-style", element.curveStyle),
+                )
                 event.target.value = ""
                 numberOfNodes.current = cy?.nodes().length ?? 0
             }
