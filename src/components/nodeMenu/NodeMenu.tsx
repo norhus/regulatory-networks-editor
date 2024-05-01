@@ -78,6 +78,7 @@ const NodeMenu: React.FC<Props> = ({ onConfirm }) => {
                 <input
                     type="number"
                     id="width"
+                    min={30}
                     className={classes.dimensionInput}
                     value={dimensions.width}
                     onChange={(e) => setDimensions({ height: dimensions.height, width: parseInt(e.target.value) })}

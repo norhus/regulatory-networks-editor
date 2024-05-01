@@ -40,7 +40,7 @@ const Menu: React.FC<Props> = ({
     return (
         <div className={classes.menu}>
             <Button title={"Add edge"} onClick={onAddEdgeClick} />
-            <Button title={"Remove selected"} onClick={onRemoveSelectedClick} />
+            <Button title={"Remove"} onClick={onRemoveSelectedClick} />
             <Button title={"Reset"} onClick={resetBoard} />
             <Button title={"Customize nodes"} onClick={onCustomizeNodes} />
             <Button title={"Customize edges"} onClick={onCustomizeEdges} />

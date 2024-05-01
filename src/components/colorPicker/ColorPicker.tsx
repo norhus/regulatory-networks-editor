@@ -17,7 +17,13 @@ const ColorPicker: React.FC<Props> = ({ onChange, color }) => {
                 onChange={(newColor) => onChange(newColor)}
                 color={color}
             />
-            <HexColorInput className={classes.colorInput} onChange={(newColor) => onChange(newColor)} color={color} />
+            <HexColorInput
+                className={classes.colorInput}
+                onChange={(newColor) => onChange(newColor)}
+                color={color}
+                prefixed
+                alpha
+            />
             <div className={classes.colorPickerSwatches}>
                 {presetColors.map((presetColor) => (
                     <button

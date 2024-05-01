@@ -22,6 +22,7 @@ code {
   height: 200px !important;
   right: 10px !important;
   bottom: 10px !important;
+  user-select: none;
 }
 
 .react-colorful__pointer {

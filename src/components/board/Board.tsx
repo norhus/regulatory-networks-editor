@@ -339,10 +339,12 @@ const Board = () => {
     const onExportClick = () => {
         const parentNodes = cy?.nodes().filter((node) => node.isParent())
         const nonParentNodes = cy?.nodes().filter((node) => !node.isParent())
+        const edges = cy?.edges() ?? []
         let exportNodes: any[] = []
         if (parentNodes) {
             exportNodes = parentNodes.map((element) => ({
                 ...(element.json() as Object),
+                selected: false,
                 style: {
                     "background-color": element.style()["background-color"],
                     "background-opacity": element.style()["background-opacity"],
@@ -357,6 +359,7 @@ const Board = () => {
                 ...exportNodes,
                 ...nonParentNodes.map((element) => ({
                     ...(element.json() as Object),
+                    selected: false,
                     style: {
                         "background-color": element.style()["background-color"],
                         "background-opacity": element.style()["background-opacity"],
@@ -369,8 +372,9 @@ const Board = () => {
         }
         const exportElements = [
             ...exportNodes,
-            cy?.edges().map((element) => ({
+            ...edges.map((element) => ({
                 ...(element.json() as Object),
+                selected: false,
                 style: {
                     "line-color": element.style()["line-color"],
                     "line-opacity": element.style()["line-opacity"],
