@@ -42,7 +42,12 @@ const NodeMenu: React.FC<Props> = ({ onConfirm }) => {
 
     return (
         <div className={classes.container}>
-            <ColorPicker color={color} onChange={(color) => setColor(color)} />
+            <ColorPicker
+                color={color}
+                onChange={(color) => {
+                    setColor(color)
+                }}
+            />
             <div className={classes.dropdownContainer}>
                 {shapes.map((shape) => {
                     const shapeButtonStyles = classNames(classes.shapeButton, {

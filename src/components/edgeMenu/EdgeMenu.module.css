@@ -28,7 +28,7 @@
     cursor: pointer;
 }
 
-.curveStyleButton {
+.optionButton {
     width: 100%;
     height: 25px;
     border: none;
@@ -39,7 +39,7 @@
     border-radius: 4px;
 }
 
-.curveStyleButton:hover {
+.optionButton:hover {
     background-color: #dadada;
     cursor: pointer;
 }
@@ -53,4 +53,14 @@
     align-items: center;
     margin: 8px;
     width: 100%;
+}
+
+.dropdownContainer {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: #F0F0F0FF;
+    border-radius: 9px;
+    max-height: 200px;
+    overflow: auto;
+    margin: 8px;
 }

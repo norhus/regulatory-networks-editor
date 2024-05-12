@@ -121,6 +121,8 @@ const Board = () => {
                     style: {
                         "curve-style": "unbundled-bezier",
                         "line-color": "#999999",
+                        "target-arrow-shape": "triangle",
+                        "target-arrow-color": "#999999",
                     },
                 },
                 {
@@ -378,6 +380,8 @@ const Board = () => {
                 style: {
                     "line-color": element.style()["line-color"],
                     "line-opacity": element.style()["line-opacity"],
+                    "target-arrow-shape": element.style()["target-arrow-shape"],
+                    "target-arrow-color": element.style()["target-arrow-color"],
                 },
                 curveStyle: element.style()["curve-style"],
             })),
@@ -428,23 +432,49 @@ const Board = () => {
         setIsCustomizingNodes(false)
     }
 
-    const onConfirmEdgeCustomization = (color: string, curveStyle: string) => {
+    const onConfirmEdgeCustomization = (color: string, curveStyle: string, arrowShape: string) => {
         let opacity = 1
         let currentColor = color
+
         if (color.length > 7) {
             opacity = Math.round((parseInt(color.slice(-2), 16) / 255) * 100) / 100
             currentColor = currentColor.slice(0, -2)
         }
+
         cy?.edges(":selected").style({
             "line-color": currentColor,
             "line-opacity": opacity,
+            "target-arrow-color": currentColor,
         })
+
+        if (arrowShape !== "") {
+            cy?.edges(":selected").style({
+                "target-arrow-shape": arrowShape,
+            })
+        }
+
         if (curveStyle !== "") {
-            const edgesToChange = cy?.edges(":selected").clone()
+            cy?.edges(":selected").forEach((edge) => {
+                cy
+                    ?.add({
+                        group: "edges",
+                        data: {
+                            source: edge.data().source,
+                            target: edge.data().target,
+                            label: `Edge from ${edge.data().source} to ${edge.data().target}`,
+                        },
+                        style: {
+                            "line-color": edge.style()["line-color"],
+                            "line-opacity": edge.style()["line-opacity"],
+                            "target-arrow-shape": edge.style()["target-arrow-shape"],
+                            "target-arrow-color": edge.style()["target-arrow-color"],
+                        },
+                        pannable: false,
+                    })
+                    .style("curve-style", curveStyle)
+            })
 
             cy?.remove(cy?.edges(":selected"))
-            edgesToChange?.forEach((edge) => addEdgeToCy(edge.data().source, edge.data().target, curveStyle))
-
             setCurrentCurveStyle(curveStyle)
         }
         setIsCustomizingEdges(false)
