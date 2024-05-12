@@ -169,7 +169,7 @@ const Board = () => {
         })
 
         // So far, we use the default parameters for edge editing.
-        const ee = (cy as any).edgeEditing({})
+        const ee = (cy as any).edgeEditing({ anchorShapeSizeFactor: 5 })
         // Edge editing *always* registers a context-tap listener
         // and calls the context menu from there, even if the context
         // menu extension is not present (I believe this is a bug, but
