@@ -323,6 +323,10 @@ const Board = () => {
 
         if (files && files.length !== 0) {
             const file = files[0]
+            if (file.type !== "application/json") {
+                event.target.value = ""
+                return alert(`The file type must be .json`)
+            }
             const fileReader = new FileReader()
             fileReader.readAsText(file)
             fileReader.onloadstart = (event: ProgressEvent<FileReader>) => {
@@ -562,13 +566,7 @@ const Board = () => {
             {isCustomizingEdges && <EdgeMenu onConfirm={onConfirmEdgeCustomization} />}
             {isApplyingLayout && <LayoutMenu onConfirm={onConfirmLayout} />}
             <div className={classes.board} ref={graphRef} id={"cyBoard"} />
-            <input
-                style={{ display: "none" }}
-                accept=".json,.txt"
-                ref={inputFile}
-                onChange={handleFileUpload}
-                type="file"
-            />
+            <input style={{ display: "none" }} accept=".json" ref={inputFile} onChange={handleFileUpload} type="file" />
         </React.Fragment>
     )
 }

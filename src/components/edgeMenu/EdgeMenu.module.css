@@ -51,7 +51,7 @@
 .curveStylesContainer {
     display: flex;
     align-items: center;
-    margin: 8px;
+    margin: 4px 8px;
     width: 100%;
 }
 
