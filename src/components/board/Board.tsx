@@ -170,6 +170,13 @@ const Board = () => {
             selectedNodes.current = selectedNodes.current.filter((node) => node !== e.target.data().id)
         })
 
+        cy.on("cdndout", function (event, dropTarget) {
+            if (dropTarget.isParent() && dropTarget.children().length === 1) {
+                dropTarget.children().move({ parent: null })
+                dropTarget.remove()
+            }
+        })
+
         // So far, we use the default parameters for edge editing.
         const ee = (cy as any).edgeEditing({ anchorShapeSizeFactor: 5 })
         // Edge editing *always* registers a context-tap listener
