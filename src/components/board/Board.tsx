@@ -423,6 +423,7 @@ const Board = () => {
     ) => {
         let opacity = 1
         let currentColor = color
+
         if (color.length > 7) {
             opacity = Math.round((parseInt(color.slice(-2), 16) / 255) * 100) / 100
             currentColor = currentColor.slice(0, -2)
@@ -431,15 +432,24 @@ const Board = () => {
             "background-color": currentColor,
             "background-opacity": opacity,
         })
+
         if (shape !== "") {
             cy?.nodes(":selected").style({
                 shape: shape,
             })
         }
-        cy?.nodes(":selected").style({
-            height: dimensions.height,
-            width: dimensions.width,
-        })
+
+        if (dimensions.height && dimensions.height >= 30) {
+            cy?.nodes(":selected").style({
+                height: dimensions.height,
+            })
+        }
+        if (dimensions.width && dimensions.width >= 30) {
+            cy?.nodes(":selected").style({
+                width: dimensions.width,
+            })
+        }
+
         setIsCustomizingNodes(false)
     }
 

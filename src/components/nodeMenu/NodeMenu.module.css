@@ -60,6 +60,10 @@
     outline-width: 0;
 }
 
+.dimensionInputLow {
+    color: #dadada;
+}
+
 .dropdownContainer {
     display: flex;
     flex-wrap: wrap;
