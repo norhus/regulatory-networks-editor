@@ -3,7 +3,7 @@ import classes from "./NodeMenu.module.css"
 import classNames from "classnames"
 import ColorPicker from "../colorPicker/ColorPicker"
 
-const shapes = [
+const SHAPES = [
     "ellipse",
     "triangle",
     "round-triangle",
@@ -49,7 +49,7 @@ const NodeMenu: React.FC<Props> = ({ onConfirm }) => {
                 }}
             />
             <div className={classes.dropdownContainer}>
-                {shapes.map((shape) => {
+                {SHAPES.map((shape) => {
                     const shapeButtonStyles = classNames(classes.shapeButton, {
                         [classes.active]: shape === selectedShape,
                     })

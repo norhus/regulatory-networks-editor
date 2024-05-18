@@ -36,10 +36,10 @@ const layouts: any = {
     preset: { name: "preset" },
     grid: { name: "grid" },
     circle: { name: "circle" },
-    concentric: { name: "concentric" },
-    breadthfirst: { name: "breadthfirst", directed: true },
-    cose: { name: "cose", animate: false },
-    dagre: { name: "dagre" },
+    concentric: { name: "concentric", equidistant: true, minNodeSpacing: 13 },
+    breadthfirst: { name: "breadthfirst", directed: true, spacingFactor: 1 },
+    cose: { name: "cose", animate: false, componentSpacing: 100 },
+    dagre: { name: "dagre", spacingFactor: 2, rankDir: "TB" },
 }
 
 const Board = () => {
@@ -52,8 +52,6 @@ const Board = () => {
     const [labelsVisible, setLabelsVisible] = useState(true)
     const [gridEnabled, setGridEnabled] = useState(true)
     const [cdnd, setCdnd] = useState()
-    const [ee, setEe] = useState()
-    const [gg, setGg] = useState()
 
     const graphRef = useRef(null)
     const selectedNodes = useRef<string[]>([])
@@ -142,7 +140,7 @@ const Board = () => {
             ],
         })
 
-        cy.on("mousedown", "node", (e) => {
+        cy.on("mousedown", "node", () => {
             // @ts-ignore
             cy.nodes().noOverlap({ padding: 2.5 })
         })
@@ -178,7 +176,10 @@ const Board = () => {
         })
 
         // So far, we use the default parameters for edge editing.
-        const ee = (cy as any).edgeEditing({ anchorShapeSizeFactor: 5 })
+        // @ts-ignore
+        cy.edgeEditing({
+            anchorShapeSizeFactor: 5,
+        })
         // Edge editing *always* registers a context-tap listener
         // and calls the context menu from there, even if the context
         // menu extension is not present (I believe this is a bug, but
@@ -197,7 +198,7 @@ const Board = () => {
         cdnd.disable()
 
         // @ts-ignore
-        const gg = cy.gridGuide({
+        cy.gridGuide({
             snapToGridOnRelease: true,
             snapToGridDuringDrag: false,
             geometricGuideline: true,
@@ -213,8 +214,6 @@ const Board = () => {
         // @ts-ignore
         cy.navigator()
 
-        setGg(gg)
-        setEe(ee)
         setCdnd(cdnd)
         setCy(cy)
     }
@@ -329,10 +328,10 @@ const Board = () => {
             }
             const fileReader = new FileReader()
             fileReader.readAsText(file)
-            fileReader.onloadstart = (event: ProgressEvent<FileReader>) => {
+            fileReader.onloadstart = () => {
                 cy?.remove(cy?.elements())
             }
-            fileReader.onloadend = (ev: ProgressEvent<FileReader>) => {
+            fileReader.onloadend = () => {
                 const json = JSON.parse(fileReader.result as string)
                 json.map((element: any) =>
                     element.group === "nodes"
@@ -428,10 +427,13 @@ const Board = () => {
             opacity = Math.round((parseInt(color.slice(-2), 16) / 255) * 100) / 100
             currentColor = currentColor.slice(0, -2)
         }
-        cy?.nodes(":selected").style({
-            "background-color": currentColor,
-            "background-opacity": opacity,
-        })
+
+        if (opacity !== 0) {
+            cy?.nodes(":selected").style({
+                "background-color": currentColor,
+                "background-opacity": opacity,
+            })
+        }
 
         if (shape !== "") {
             cy?.nodes(":selected").style({
@@ -462,11 +464,13 @@ const Board = () => {
             currentColor = currentColor.slice(0, -2)
         }
 
-        cy?.edges(":selected").style({
-            "line-color": currentColor,
-            "line-opacity": opacity,
-            "target-arrow-color": currentColor,
-        })
+        if (opacity !== 0) {
+            cy?.edges(":selected").style({
+                "line-color": currentColor,
+                "line-opacity": opacity,
+                "target-arrow-color": currentColor,
+            })
+        }
 
         if (arrowShape !== "") {
             cy?.edges(":selected").style({
@@ -505,7 +509,7 @@ const Board = () => {
         if (layout !== "") {
             if (cy?.nodes(":selected").length !== 0) {
                 if (["dagre", "breadthfirst"].includes(layout)) {
-                    const unselectedNodes = cy?.nodes(":unselected").clone()
+                    const unselectedNodes = cy?.nodes(":unselected")
                     const unselectedConnectedEdges = cy?.nodes(":unselected").connectedEdges()
 
                     cy?.remove(cy?.nodes(":unselected"))

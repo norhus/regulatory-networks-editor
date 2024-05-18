@@ -3,8 +3,8 @@ import classes from "./EdgeMenu.module.css"
 import classNames from "classnames"
 import ColorPicker from "../colorPicker/ColorPicker"
 
-const curveStyles = ["unbundled-bezier", "segments"]
-const arrowShapes = [
+const CURVESTYLES = ["unbundled-bezier", "segments"]
+const ARROWSHAPES = [
     "triangle",
     "triangle-tee",
     "circle-triangle",
@@ -31,7 +31,7 @@ const EdgeMenu: React.FC<Props> = ({ onConfirm }) => {
         <div className={classes.container}>
             <ColorPicker color={color} onChange={(color) => setColor(color)} />
             <div className={classes.dropdownContainer}>
-                {arrowShapes.map((arrowShape) => {
+                {ARROWSHAPES.map((arrowShape) => {
                     const shapeButtonStyles = classNames(classes.optionButton, {
                         [classes.active]: arrowShape === selectedArrowShape,
                     })
@@ -52,7 +52,7 @@ const EdgeMenu: React.FC<Props> = ({ onConfirm }) => {
                 })}
             </div>
             <div className={classes.curveStylesContainer}>
-                {curveStyles.map((curveStyle) => {
+                {CURVESTYLES.map((curveStyle) => {
                     const edgeStyles = classNames(classes.optionButton, {
                         [classes.active]: curveStyle === selectedCurveStyle,
                     })

@@ -2,7 +2,7 @@ import React from "react"
 import classes from "./ColorPicker.module.css"
 import { HexAlphaColorPicker, HexColorInput } from "react-colorful"
 
-const presetColors = ["#999999", "#ff0000", "#ff9100", "#ffff00", "#40ff00", "#00ffea", "#0048ff", "#a100ff", "#ff00ea"]
+const PRESETCOLORS = ["#999999", "#ff0000", "#ff9100", "#ffff00", "#40ff00", "#00ffea", "#0048ff", "#a100ff", "#ff00ea"]
 
 interface Props {
     onChange: (color: string) => void
@@ -25,7 +25,7 @@ const ColorPicker: React.FC<Props> = ({ onChange, color }) => {
                 alpha
             />
             <div className={classes.colorPickerSwatches}>
-                {presetColors.map((presetColor) => (
+                {PRESETCOLORS.map((presetColor) => (
                     <button
                         key={presetColor}
                         className={classes.swatch}
