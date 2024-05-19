@@ -33,3 +33,7 @@
 .unactiveButton:hover {
     background-color: #e85d5d;
 }
+
+.menuOpenedButton {
+    background-color: #dadada;
+}

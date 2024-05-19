@@ -575,6 +575,9 @@ const Board = () => {
                 onExportClick={onExportClick}
                 onRemoveSelectedClick={onRemoveSelectedClick}
                 resetBoard={resetBoard}
+                isCustomizingNodes={isCustomizingNodes}
+                isCustomizingEdges={isCustomizingEdges}
+                isApplyingLayout={isApplyingLayout}
             />
             {isCustomizingNodes && <NodeMenu onConfirm={onConfirmNodeCustomization} />}
             {isCustomizingEdges && <EdgeMenu onConfirm={onConfirmEdgeCustomization} />}

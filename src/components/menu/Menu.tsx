@@ -18,6 +18,9 @@ interface Props {
     onExportClick: () => void
     onRemoveSelectedClick: () => void
     resetBoard: () => void
+    isCustomizingNodes: boolean
+    isCustomizingEdges: boolean
+    isApplyingLayout: boolean
 }
 
 const Menu: React.FC<Props> = ({
@@ -36,15 +39,18 @@ const Menu: React.FC<Props> = ({
     onExportClick,
     onRemoveSelectedClick,
     resetBoard,
+    isCustomizingNodes,
+    isCustomizingEdges,
+    isApplyingLayout,
 }) => {
     return (
         <div className={classes.menu}>
             <Button title={"Add edge"} onClick={onAddEdgeClick} />
             <Button title={"Remove"} onClick={onRemoveSelectedClick} />
             <Button title={"Reset"} onClick={resetBoard} />
-            <Button title={"Customize nodes"} onClick={onCustomizeNodes} />
-            <Button title={"Customize edges"} onClick={onCustomizeEdges} />
-            <Button title={"Apply layout"} onClick={onApplyLayout} />
+            <Button title={"Customize nodes"} onClick={onCustomizeNodes} menuOpened={isCustomizingNodes} />
+            <Button title={"Customize edges"} onClick={onCustomizeEdges} menuOpened={isCustomizingEdges} />
+            <Button title={"Apply layout"} onClick={onApplyLayout} menuOpened={isApplyingLayout} />
             <Button title={"Increase spacing"} onClick={() => changeSpacing(true)} />
             <Button title={"Decrease spacing"} onClick={() => changeSpacing(false)} />
             <Button title={"Labels"} onClick={toggleLabelsVisibility} active={labelsVisible} />

@@ -6,12 +6,14 @@ interface Props {
     title: string
     onClick?: () => void | undefined
     active?: boolean
+    menuOpened?: boolean
 }
 
-const Button: React.FC<Props> = ({ title, onClick = undefined, active }) => {
+const Button: React.FC<Props> = ({ title, onClick = undefined, active, menuOpened }) => {
     const buttonStyles = classNames(classes.button, {
         [classes.activeButton]: active,
         [classes.unactiveButton]: active === false,
+        [classes.menuOpenedButton]: menuOpened,
     })
 
     return (
